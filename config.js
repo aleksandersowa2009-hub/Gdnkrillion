@@ -5,4 +5,4 @@ window.GDNK_SCORE_URL = "https://script.google.com/macros/s/AKfycbwWAjiu58iQedgq
 
 // 2. Reset switch. Change this number (1 -> 2 -> 3...) to make every phone
 //    and tablet forget its dives, so everyone can play the Daily Dive again.
-window.GDNK_RESET = "1";
+window.GDNK_RESET = "2";
