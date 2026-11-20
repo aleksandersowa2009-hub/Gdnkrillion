@@ -110,6 +110,13 @@ footer a,footer button{color:var(--dim);font-size:12px;text-decoration:underline
 .turn span{color:var(--gold)}
 .used{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
 .used span{font-size:12px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--dim)}
+
+.sug{margin-top:10px;padding:12px;border-radius:12px;border:1px solid rgba(255,224,102,.5);background:rgba(255,224,102,.08);font-size:15px}
+.sug b{color:var(--gold)}
+.sug .row2{display:flex;gap:8px;margin-top:10px}
+.sug button{flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:15px}
+.sug .yes{background:var(--gold);color:#2b1d00}
+.sug .no{background:transparent;border:1px solid var(--line);color:var(--ink)}
 .flash{font-size:15px;min-height:22px;margin-top:8px}
 .code{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:.06em;padding:12px 14px;border-radius:12px;background:rgba(255,224,102,.1);border:1px dashed var(--gold);color:var(--gold);text-align:center;margin:10px 0}
 .guideq{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
@@ -244,6 +251,7 @@ footer a,footer button{color:var(--dim);font-size:12px;text-decoration:underline
         <button class="go" type="submit">Dive</button>
       </form>
       <div class="nope" id="nope"></div>
+      <div class="sug hide" id="sug"></div>
       <button class="skip" id="giveUp" type="button">Give up on this one</button>
     </div>
     <div id="resBox" class="hide" style="margin-top:14px"></div>
@@ -305,6 +313,7 @@ footer a,footer button{color:var(--dim);font-size:12px;text-decoration:underline
         <button class="go" type="submit">Go</button>
       </form>
       <div class="nope" id="pNope"></div>
+      <div class="sug hide" id="pSug"></div>
       <div class="flash" id="pFlash"></div>
       <button class="skip" id="pPass" type="button">I've got nothing (lose a heart)</button>
     </div>
@@ -324,6 +333,7 @@ footer a,footer button{color:var(--dim);font-size:12px;text-decoration:underline
     <div class="muted" id="winSeat"></div>
   </div>
   <div class="card"><table class="recap" id="standings"></table></div>
+  <div class="card"><div class="kicker">Every answer, prompt by prompt</div><div id="pAnswers"></div></div>
   <button class="btn gold" id="rematch"><span>Rematch, same seats</span><span>↻</span></button>
   <button class="btn" id="reseat"><span>Change players</span><span>✎</span></button>
   <button class="btn ghost" data-home><span>Back to the surface</span><span>↑</span></button>
@@ -347,6 +357,7 @@ footer a,footer button{color:var(--dim);font-size:12px;text-decoration:underline
     <table class="recap" id="lb"></table>
   </div>
   <button class="btn" id="openGuide"><span>Answer key (every accepted answer)<small>All prompts, both levels</small></span><span>📖</span></button>
+  <button class="btn" id="wipeDev"><span>Reset this device<small>Clears today's dives and local scores on this phone or tablet</small></span><span>↺</span></button>
   <button class="btn ghost" id="devOut"><span>Leave developer mode</span><span>🔒</span></button>
 </section>
 
@@ -632,55 +643,85 @@ const P=[
 ['Helena Harciarek','k','','UNODC, the third chair of a three-chair committee'],
 ['Franciszek Jerzy Wincenty Basiński','k','franciszek basinski|basinski','UN Women. Bonus respect if you typed all four names']]},
 
-{id:'mot',tag:'Procedure',q:'Name a motion, point or procedural move in MUN',ctx:'This is every one we could find across MUN rules of procedure. Everyone says "mod". Go deeper.',l2:1,a:[
-['Moderated caucus','p','mod|mod caucus|moderated'],
-['Unmoderated caucus','p','unmod|unmod caucus|unmoderated'],
-['Point of information','p','poi|point of information to the speaker'],
-['Point of personal privilege','s','ppp|personal privilege'],
-['Point of order','s','poo'],
-['Open the speakers list','s','speakers list|open speakers list|set the speakers list|general speakers list|gsl|open the gsl|open debate'],
-['Close debate','s','closure of debate|close the debate|closure|move into voting procedure|voting procedure|move to voting|enter voting procedure|move into voting|move directly into voting procedure'],
-['Introduce a draft resolution','s','introduce draft resolution|introduce a resolution|introduce the resolution'],
-['Introduce a working paper','s','introduce working paper|working paper'],
-['Point of parliamentary inquiry','c','parliamentary inquiry|point of inquiry|ppi|point of parliamentary procedure'],
-['Suspend the meeting','c','suspend the session|suspension of the meeting|suspend debate|suspend|suspension|recess'],
-['Adjourn the meeting','c','adjourn the session|adjournment of the meeting|adjourn|adjournment'],
-['Roll call vote','r','roll call|roll call voting|vote by roll call'],
-['Right of reply','r','reply'],
-['Introduce an amendment','r','amendment|amend|amendments|unfriendly amendment|friendly amendment'],
-['Extend the caucus','r','extension|extend|extend debate time|extension of the caucus|extend the mod|extend the unmod|extend debate'],
-['Set the agenda','r','adopt the agenda|set agenda|agenda|establish the agenda'],
-['Table the topic','r','adjourn debate|adjournment of debate|postpone debate|table|table the debate|postpone'],
-['Request a follow-up','r','follow up|point of follow up|follow up question'],
-['Change speaking time','r','set speaking time|set the speaking time|limit speaking time|change the speaking time|speaking time'],
-['Yield to the chair','r','yield to chair'],
+{id:'mot',tag:'Procedure',q:'Name a motion, point or procedural move in MUN',ctx:'Everything in the GDNMUN 2026 Rules of Procedure counts, plus moves from other MUNs and the real UN. Everyone says "mod". Go deeper.',l2:1,a:[
+['Moderated caucus','p','mod|mod caucus|moderated|motion for a moderated caucus','GDNMUN RoP 8.17'],
+['Unmoderated caucus','p','unmod|unmod caucus|unmoderated|motion for an unmoderated caucus','GDNMUN RoP 8.18'],
+['Point of information','p','poi|point of information to the speaker','GDNMUN RoP 9.4'],
+['Point of personal privilege','s','ppp|personal privilege','GDNMUN RoP 9.1. The only disruptive point'],
+['Point of order','s','poo','GDNMUN RoP 9.3'],
+['Proceed to the General Speakers\' List','s','proceed to the gsl|general speakers list|speakers list|gsl|open the speakers list|open speakers list|open the gsl|set the speakers list|open debate','GDNMUN RoP 8.4'],
+['Set the agenda','s','adopt the agenda|set agenda|agenda|establish the agenda','GDNMUN RoP 8.3'],
+['Introduce the draft resolution','s','introduce draft resolution|introduce a draft resolution|introduce a resolution|introduce the resolution','GDNMUN RoP 8.23'],
+['Introduce the working paper','s','introduce working paper|introduce a working paper|working paper','GDNMUN RoP 8.22'],
+['Move to the voting procedure','s','voting procedure|move into voting procedure|move to voting|enter voting procedure|move into voting|move directly into voting procedure|move to the voting procedure','GDNMUN RoP 8.25'],
+['Close debate','s','closure of debate|close the debate|closure','Common in other MUNs. GDNMUN uses Move to the Voting Procedure'],
+['Point of parliamentary inquiry','c','parliamentary inquiry|point of inquiry|ppi|point of parliamentary procedure','GDNMUN RoP 9.2'],
+['Suspend the meeting','c','suspend the session|suspension of the meeting|suspend debate|suspend|suspension|recess','GDNMUN RoP 8.33'],
+['Adjourn the meeting','c','adjourn the session|adjournment of the meeting|adjourn|adjournment','GDNMUN RoP 8.34'],
+['Abstain','c','abstention|abstaining','You can only abstain if you declared yourself Present, not Present and Voting'],
+['Establish the quorum','r','establish quorum|quorum','GDNMUN RoP 8.1. The first motion of every day'],
+['Right of reply','r','reply','GDNMUN RoP 9.5. Sovereignty insulted? Demand an apology'],
+['Vote by roll call','r','roll call vote|roll call voting','GDNMUN RoP 8.26. The default way to vote'],
+['Roll call','r','attendance|roll call attendance','GDNMUN RoP 6.2. Present or Present and Voting?'],
+['Present','r','declare present','GDNMUN RoP 6.2. Lets you abstain on substantive votes'],
+['Follow-up','r','motion for a follow up|follow up|request a follow up|point of follow up|follow up question','GDNMUN RoP 8.11. No follow-ups to a follow-up'],
+['Change the time per speaker','r','time per speaker|change speaking time|set speaking time|set the speaking time|limit speaking time|change the speaking time|speaking time|extend speaking time','GDNMUN RoP 8.7'],
+['Extend the duration of the caucus','r','extend the caucus|extension|extend|extend debate time|extension of the caucus|extend the mod|extend the unmod|extend debate|extend the duration','GDNMUN RoP 8.20. Max one extension, by half'],
+['Terminate the caucus','r','end the caucus|terminate|termination of the caucus','GDNMUN RoP 8.21'],
+['Extend the number of points of information','r','extend pois|extend the pois|extend points of information|extend the number of pois|more pois','GDNMUN RoP 8.10. Max five in committee'],
+['Be added to the General Speakers\' List','r','be added to the gsl|added to the speakers list|add to the gsl|added to the gsl','GDNMUN RoP 8.5'],
+['Move to the amendment procedure','r','amendment procedure|proceed to the amendment procedure|move to amendments|open for amendments','GDNMUN RoP 8.24'],
+['Introduce an amendment','r','amendment|amend|amendments','GDNMUN RoP 7.6.1'],
+['Friendly amendment','r','friendly','GDNMUN RoP 7.6.1. All sponsors agree, so no vote'],
+['Unfriendly amendment','r','unfriendly','GDNMUN RoP 7.6.1. One speech for, one against, then a vote'],
+['Explain the delegate\'s vote','r','explain the vote|explanation of vote|explanation of votes|eov|explain your vote','GDNMUN RoP 8.31'],
+['Veto','r','veto the resolution|use the veto','GDNMUN RoP 10.1.3.1. P5 only, and never in the General Assembly'],
+['Yield to the chair','r','yield to chair|yield the floor|yield','GDNMUN RoP 9.4'],
 ['Yield to another delegate','r','yield to a delegate|yield to delegate'],
 ['Yield to points of information','r','yield to questions|yield to pois|yield to poi'],
-['Open the floor to points of information','r','open the floor|open the floor to pois|entertain points of information|extend points of information'],
-['Explanation of vote','r','explanation of votes|eov'],
-['Resume debate','r','resumption of debate|reopen debate'],
-['Close the speakers list','r','close speakers list'],
-['Reopen the speakers list','r','reopen speakers list'],
-['Withdraw a draft resolution','r','withdraw|withdraw the resolution|withdraw a motion'],
-['Point of clarification','r','clarification'],
+['Table the topic','r','adjourn debate|adjournment of debate|postpone debate|table|table the debate|postpone','Other MUNs'],
+['Withdraw a draft resolution','r','withdraw|withdraw the resolution|withdraw a motion','Other MUNs'],
+['Point of clarification','r','clarification','Other MUNs'],
 ['Introduce a directive','r','directive','Crisis committees'],
-['Division of the question','d','divide the question|division|vote clause by clause|clause by clause|split the question'],
-['Reorder draft resolutions','d','reordering draft resolutions|reorder resolutions|reorder'],
-['Appeal the decision of the chair','d','appeal the chair|appeal|appeal of the chair|challenge the chair|appeal the chairs decision'],
-['Round robin','d','round robin caucus'],
-['Straw poll','d','straw vote'],
-['Reconsider','d','reconsideration|reconsider a vote'],
-['Tour de table','d','tour de table caucus'],
-['Vote with rights','d','yes with rights|no with rights|with rights'],
-['Adopt by consensus','d','consensus|adoption by consensus|acclamation|vote by acclamation'],
-['Previous question','d','move the previous question|the previous question'],
-['Point of information to the chair','d','question to the chair'],
+['Appeal','d','motion to appeal|appeal the decision of the chair|appeal the chair|appeal of the chair|challenge the chair|appeal the chairs decision','GDNMUN RoP 8.35. The Presidents of the General Assembly have the final word'],
+['Challenge the quorum','d','challenge quorum','GDNMUN RoP 8.2. For switching between Present and Present and Voting'],
+['Present and voting','d','declare present and voting','GDNMUN RoP 6.2. No abstaining after this'],
+['Be removed from the General Speakers\' List','d','be removed from the gsl|removed from the speakers list|remove from the gsl|removed from the gsl','GDNMUN RoP 8.6'],
+['Be moved up or down the General Speakers\' List','d','be moved up the gsl|be moved down the gsl|moved up|moved down|move up the gsl|move down the gsl|be moved up down the gsl','GDNMUN RoP 8.8'],
+['Open the delegate to points of information','d','open the delegate to pois|open to points of information|open the floor to points of information|open the floor|open the floor to pois|entertain points of information','GDNMUN RoP 8.9. For when a speaker said they\'re closed to POIs'],
+['Vote clause by clause','d','clause by clause','GDNMUN RoP 8.28'],
+['Divide the question','d','division of the question|division|split the question','GDNMUN RoP 8.29. Operative clauses only'],
+['Vote by acclamation','d','acclamation|adopt by acclamation','GDNMUN RoP 8.27'],
+['Change the delegate\'s vote','d','change the vote|change your vote|change delegates vote','GDNMUN RoP 8.32. Only after a weak explanation'],
+['Punish','d','motion to punish|punishment','GDNMUN RoP 8.15. Raise a Point of Order first'],
+['Censure','d','motion to censure|censure the delegate','GDNMUN RoP 8.16. Up to 15 minutes, once per session'],
+['Cite the source','d','motion to cite the source|cite your source|source|cite','GDNMUN RoP 8.12. The source goes up on the committee Facebook group'],
+['P5 Caucus','d','permanent five caucus|motion for a p5 caucus|p5','GDNMUN RoP 10.1.3.4. 15 minutes, P5 only'],
+['Veto concern','d','raise a veto concern','GDNMUN RoP 10.1.3.2. No veto without one first'],
+['Second the motion','d','seconds|second|seconding','GDNMUN RoP 8.17. No seconds means the motion fails'],
+['Striking amendment','d','strike|striking','GDNMUN RoP 7.6.1. Deletes a clause'],
+['Adding amendment','d','adding','GDNMUN RoP 7.6.1. Creates a new clause'],
+['Altering amendment','d','altering|alter','GDNMUN RoP 7.6.1. Changes an existing clause'],
+['Send a page note','d','page note|page notes','GDNMUN RoP 3.3. Amendments are written on page notes too'],
+['Reorder draft resolutions','d','reordering draft resolutions|reorder resolutions|reorder','Other MUNs'],
+['Round robin','d','round robin caucus','Other MUNs'],
+['Straw poll','d','straw vote','Other MUNs'],
+['Reconsider','d','reconsideration|reconsider a vote','Other MUNs'],
+['Tour de table','d','tour de table caucus','Other MUNs'],
+['Vote with rights','d','yes with rights|no with rights|with rights','Other MUNs'],
+['Adopt by consensus','d','consensus|adoption by consensus','Other MUNs'],
+['Previous question','d','move the previous question|the previous question','Robert\'s Rules'],
 ['Introduce a press release','d','press release|communique','Crisis committees'],
-['Consultation of the whole','k','consultation|consult of the whole'],
+['Consult the whole','k','consultation of the whole|consultation|consult of the whole|motion to consult the whole','GDNMUN RoP 8.19. Everyone speaks, in alphabetical order'],
+['Split the house','k','motion to split the house','GDNMUN RoP 8.30. Re-vote with no abstentions allowed'],
+['Present data','k','motion to present data|present the data|show data','GDNMUN RoP 8.13. Charts and graphs, during a moderated caucus'],
+['Consult the ambassadorship','k','consult the ambassador|motion to consult the ambassadorship|consult ambassador','GDNMUN RoP 8.14. Leave the room to ask your UNSC ambassador'],
+['Revoke the sponsorship','k','revoke sponsorship|motion to revoke the sponsorship','GDNMUN RoP 10.1.3.5. Ambassadors only, at the Concluding GA'],
+['Unite for peace','k','uniting for peace|motion to unite for peace|united for peace','GDNMUN RoP 10.1.3.6. Overrides a veto by sending the resolution to the GA'],
 ['Minute of silent prayer or meditation','k','silent prayer|minute of silence|moment of silence|silent meditation|moment of silent prayer|moment of meditation|minute of silent prayer','Real UN General Assembly procedure (rule 62)'],
-['No-action motion','k','no action|motion of no action|no action motion','A real UN tactic to block a vote on a draft'],
+['No-action motion','k','no action|motion of no action|no action motion','A real UN tactic to block a vote'],
 ['Important question','k','declare an important question','A real UN GA move that raises the vote needed to two-thirds'],
-['Question of competence','k','competence|challenge competence','UN GA rule 79: does the body even have the power to decide?']]},
+['Question of competence','k','competence|challenge competence','UN GA rule 79']]},
 
 {id:'gdn25',tag:'GDNMUN history',q:'Name someone who chaired or ran GDNMUN 2025',ctx:'Last year: 12 committees and a 13-person Secretariat. A few of them are back this year.',person:1,a:[
 ['Hanna Lis','p','secretary general 2025','Secretary General 2025 (not the TV journalist)'],
@@ -816,9 +857,9 @@ k:'Jetix~Nostalgia unlocked|Fox Kids|Viva Polska=viva~Gone but not forgotten|Pol
 p:'Neptune\'s Fountain=fontanna neptuna,neptune fountain,neptune,neptun|Long Market=dlugi targ|Westerplatte|European Solidarity Centre=ecs,europejskie centrum solidarnosci|St. Mary\'s Church=bazylika mariacka,mariacki,st marys basilica,st marys church,kosciol mariacki',
 c:'Gdańsk Shipyard=stocznia gdanska,shipyard,stocznia|Old Town=stare miasto,main town,glowne miasto',
 s:'The Crane=zuraw,crane,gdansk crane|Artus Court=dwor artusa|Golden Gate=zlota brama|Green Gate=zielona brama|Mariacka Street=ulica mariacka,mariacka|Oliwa Cathedral=katedra oliwska|Motława River=motlawa,motlawa river|Museum of the Second World War=muzeum ii wojny swiatowej,ww2 museum,muzeum drugiej wojny swiatowej,museum of ww2|Polsat Plus Arena=stadion energa,amber arena,pge arena,stadion gdansk,energa stadium,stadium|Main Town Hall=ratusz,ratusz glownego miasta,town hall|Polish Post Office=poczta polska,polish post office museum|Monument to the Fallen Shipyard Workers=pomnik poleglych stoczniowcow,three crosses,trzy krzyze|Upland Gate=brama wyzynna|Amber Museum=muzeum bursztynu|Gdańsk Główny station=gdansk glowny,main station,dworzec glowny|Lech Wałęsa Airport=airport,lotnisko,gdansk airport,rebiechowo|Royal Route=droga krolewska,trakt krolewski,long lane,dluga street,ulica dluga',
-r:'Prison Tower=wieza wiezienna|Torture House=katownia|Granary Island=wyspa spichrzow|Ołowianka Island=olowianka|SS Sołdek=soldek,ss soldek|National Maritime Museum=narodowe muzeum morskie,maritime museum|Great Armoury=wielka zbrojownia|Uphagen House=dom uphagena|Golden House=zlota kamienica|St. Catherine\'s Church=kosciol sw katarzyny,st catherines|St. Bridget\'s Church=kosciol sw brygidy,st bridgets|St. John\'s Church=kosciol sw jana|St. Nicholas\' Church=kosciol sw mikolaja,st nicholas church|Royal Chapel=kaplica krolewska|Great Mill=wielki mlyn|Gdańsk Shakespeare Theatre=teatr szekspirowski,shakespeare theatre|Baltic Opera=opera baltycka|Polish Baltic Philharmonic=filharmonia baltycka,filharmonia|Wisłoujście Fortress=twierdza wisloujscie,wisloujscie|Oliwa Park=park oliwski|Gdańsk Zoo=zoo,oliwa zoo,zoo oliwa|Hevelianum|Gradowa Góra=gradowa gora|Biskupia Górka=biskupia gorka|Ergo Arena|Brzeźno Pier=molo brzezno,brzezno pier|Jelitkowo Beach=jelitkowo|Galeria Bałtycka=galeria baltycka|Forum Gdańsk=forum gdansk|BHP Hall=sala bhp,bhp hall|Gate No. 2=brama nr 2,brama numer 2,gate 2,shipyard gate|Long Embankment=dlugie pobrzeze|Wybrzeże Theatre=teatr wybrzeze|Gdańsk University of Technology=politechnika gdanska,politechnika|University of Gdańsk=uniwersytet gdanski|Amber Sky=ferris wheel,diabelski mlyn,amber sky ferris wheel|National Museum=muzeum narodowe,last judgment,last judgement~Home of Memling\'s Last Judgment|Museum of Gdańsk=muzeum gdanska|Coal Market=targ weglowy|Fish Market=targ rybny|Millennium Cross=krzyz milenijny~Up on Gradowa Góra|Monument to the Defenders of the Coast=pomnik obroncow wybrzeza,westerplatte monument|Market Hall=hala targowa|Olivia Star=olivia business centre,olivia|Old Town Hall=ratusz staromiejski|Nowy Port Lighthouse=latarnia nowy port,latarnia morska,lighthouse|Shipyard cranes=zurawie stoczniowe,cranes|Solidarity Square=plac solidarnosci|Stągiewna Gate=brama stagiewna,stagwie mleczne,milk churns,milk churn gate',
-d:'Court of the Fraternity of St George=dwor bractwa sw jerzego|Abbots\' Palace=palac opatow|St. Mary\'s Gate=brama mariacka|Bread Gate=brama chlebnicka|Cow Gate=brama krowia|Holy Spirit Gate=brama swietego ducha|St. John\'s Gate=brama swietojanska|Straganiarska Gate=brama straganiarska|Lowland Gate=brama nizinna|Little Mill=maly mlyn|Holy Trinity Church=kosciol sw trojcy,church of the holy trinity|St. Peter and Paul\'s Church=kosciol sw piotra i pawla|St. Barbara\'s Church=kosciol sw barbary|St. Joseph\'s Church=kosciol sw jozefa|Corpus Christi Church=kosciol bozego ciala|St. Elizabeth\'s Church=kosciol sw elzbiety|St. James\'s Church=kosciol sw jakuba|Jacek Tower=baszta jacek|Kiek in de Kök=kiek in de kok,baszta kiek in de kok|Straw Tower=baszta slomiana|Swan Tower=baszta labedz|White Tower=baszta biala|Wood Market=targ drzewny|Hala Olivia=olivia hall|Palm House=palmiarnia,oliwa palm house|Abbots\' Granary=spichlerz opacki,ethnographic museum|Teatr Miniatura=miniatura theatre|Madison=madison shopping centre|Medical University of Gdańsk=gumed|Sobieski Monument=pomnik jana iii sobieskiego,jan iii sobieski monument,john iii sobieski monument|Świętopełk Monument=pomnik swietopelka|Monument to the Defenders of the Polish Post=pomnik obroncow poczty polskiej|Westerplatte Guardhouse No. 1=wartownia nr 1,wartownia|Bird Paradise Reserve=ptasi raj|Green Bridge=most zielony|Cow Bridge=most krowi|Ołowianka Footbridge=kladka na olowianke,olowianka footbridge,footbridge|Imperial Shipyard=stocznia cesarska|Naturalists\' House=dom przyrodnikow,archaeological museum,muzeum archeologiczne|Stogi Beach=stogi|Brzeźno Beach=brzezno beach|Sobieszewo Island=wyspa sobieszewska,sobieszewo|Pachołek Hill=pacholek,wzgorze pacholek~Viewpoint over Oliwa',
-k:'III LO Topolówka=topolowka,iii lo,3 lo,3rd high school,iii liceum~The school that organises GDNMUN|Fahrenheit\'s Thermometer=termometr fahrenheita,fahrenheit thermometer~The replica on Long Market. Fahrenheit was born in Gdańsk|100cznia=stocznia 100~Container food and culture spot in the shipyard|B90 Club=b90,klub b90~Concert hall in the old shipyard halls'
+r:'Prison Tower=wieza wiezienna|Torture House=katownia|Granary Island=wyspa spichrzow|Ołowianka Island=olowianka|SS Sołdek=soldek,ss soldek|National Maritime Museum=narodowe muzeum morskie,maritime museum|Great Armoury=wielka zbrojownia|Uphagen House=dom uphagena|Golden House=zlota kamienica|St. Catherine\'s Church=kosciol sw katarzyny,st catherines|St. Bridget\'s Church=kosciol sw brygidy,st bridgets|St. John\'s Church=kosciol sw jana|St. Nicholas\' Church=kosciol sw mikolaja,st nicholas church|Royal Chapel=kaplica krolewska|Great Mill=wielki mlyn|Gdańsk Shakespeare Theatre=teatr szekspirowski,shakespeare theatre|Baltic Opera=opera baltycka|Polish Baltic Philharmonic=filharmonia baltycka,filharmonia|Wisłoujście Fortress=twierdza wisloujscie,wisloujscie|Oliwa Park=park oliwski|Gdańsk Zoo=zoo,oliwa zoo,zoo oliwa|Hevelianum|Gradowa Góra=gradowa gora|Biskupia Górka=biskupia gorka|Ergo Arena|Brzeźno Pier=molo brzezno,brzezno pier|Jelitkowo Beach=jelitkowo|Galeria Bałtycka=galeria baltycka|Forum Gdańsk=forum gdansk|BHP Hall=sala bhp,bhp hall|Gate No. 2=brama nr 2,brama numer 2,gate 2,shipyard gate|Long Embankment=dlugie pobrzeze|Wybrzeże Theatre=teatr wybrzeze|Gdańsk University of Technology=politechnika gdanska,politechnika|University of Gdańsk=uniwersytet gdanski|Amber Sky=ferris wheel,diabelski mlyn,amber sky ferris wheel|National Museum=muzeum narodowe,last judgment,last judgement~Home of Memling\'s Last Judgment|Museum of Gdańsk=muzeum gdanska|Coal Market=targ weglowy|Fish Market=targ rybny|Millennium Cross=krzyz milenijny~Up on Gradowa Góra|Monument to the Defenders of the Coast=pomnik obroncow wybrzeza,westerplatte monument|Market Hall=hala targowa|Olivia Star=olivia business centre,olivia|Old Town Hall=ratusz staromiejski|Nowy Port Lighthouse=latarnia nowy port,latarnia morska,lighthouse|Shipyard cranes=zurawie stoczniowe,cranes|Solidarity Square=plac solidarnosci|Stągiewna Gate=brama stagiewna,stagwie mleczne,milk churns,milk churn gate|Zaspa murals=zaspa murale,monumental art collection,murals~Over 60 giant murals on Zaspa\'s blocks of flats|Falowiec=falowce~One of Europe\'s longest blocks of flats, in Przymorze|St. Mary\'s Tower=wieza mariacka~409 steps to the top|Astronomical Clock=zegar astronomiczny~Inside St. Mary\'s|Lion\'s Castle=lwi zamek|Port of Gdańsk=port gdansk,port|Tricity Landscape Park=trojmiejski park krajobrazowy,tpk,oliwa forest|AmberExpo=amber expo|Pope John Paul II Park=park jana pawla ii~Site of the 1987 papal mass on Zaspa|Reagan Park=park reagana|Gdańsk Wrzeszcz station=wrzeszcz station,dworzec wrzeszcz|Hevelius Monument=pomnik heweliusza,hevelius|Tunnel under the Martwa Wisła=tunel pod martwa wisla,tunnel|Academy of Fine Arts=asp,akademia sztuk pieknych|Westerplatte Cemetery=cmentarz na westerplatte|Amber Altar=oltarz bursztynowy~In St. Bridget\'s Church|Galeria Metropolia=metropolia|Manhattan shopping centre=manhattan,cht manhattan|Galeria Morena=morena|Wyspa Art Institute=instytut sztuki wyspa,wyspa|Łaźnia Centre for Contemporary Art=laznia,csw laznia|Klub Żak=zak,klub zak|Gdańsk Oliwa station=oliwa station|Valley of Joy=dolina radosci|Whispering Grotto=grota szeptow~In Oliwa Park|Stone Lock=sluza kamienna,kamienna sluza,mniszki~With its two little "nun" towers|Matemblewo Sanctuary=matemblewo,sanktuarium matemblewo|Ołowianka granaries=spichlerze na olowiance|Siennicki Bridge=most siennicki|Cable-stayed bridge=most wantowy|Srebrzysko Cemetery=srebrzysko|Garrison Cemetery=cmentarz garnizonowy|Northern Port=port polnocny|Baltic Hub=dct,dct gdansk,container terminal|Gdańsk Refinery=lotos,rafineria,orlen refinery|Steffens Park=park steffensa|Orunia Park=park orunski|Brzeźno Park=park brzeznienski,brzezno spa park|Jaśkowa Dolina Park=jaskowa dolina|University of Physical Education=awf,awfis|Academy of Music=akademia muzyczna,moniuszko academy|Hilton Gdańsk=hilton|Main Post Office=poczta glowna|English House=dom angielski|Ferber House=dom ferberow|Schumann House=kamienica schumannow',
+d:'Court of the Fraternity of St George=dwor bractwa sw jerzego|Abbots\' Palace=palac opatow|St. Mary\'s Gate=brama mariacka|Bread Gate=brama chlebnicka|Cow Gate=brama krowia|Holy Spirit Gate=brama swietego ducha|St. John\'s Gate=brama swietojanska|Straganiarska Gate=brama straganiarska|Lowland Gate=brama nizinna|Little Mill=maly mlyn|Holy Trinity Church=kosciol sw trojcy,church of the holy trinity|St. Peter and Paul\'s Church=kosciol sw piotra i pawla|St. Barbara\'s Church=kosciol sw barbary|St. Joseph\'s Church=kosciol sw jozefa|Corpus Christi Church=kosciol bozego ciala|St. Elizabeth\'s Church=kosciol sw elzbiety|St. James\'s Church=kosciol sw jakuba|Jacek Tower=baszta jacek|Kiek in de Kök=kiek in de kok,baszta kiek in de kok|Straw Tower=baszta slomiana|Swan Tower=baszta labedz|White Tower=baszta biala|Wood Market=targ drzewny|Hala Olivia=olivia hall|Palm House=palmiarnia,oliwa palm house|Abbots\' Granary=spichlerz opacki,ethnographic museum|Teatr Miniatura=miniatura theatre|Madison=madison shopping centre|Medical University of Gdańsk=gumed|Sobieski Monument=pomnik jana iii sobieskiego,jan iii sobieski monument,john iii sobieski monument|Świętopełk Monument=pomnik swietopelka|Monument to the Defenders of the Polish Post=pomnik obroncow poczty polskiej|Westerplatte Guardhouse No. 1=wartownia nr 1,wartownia|Bird Paradise Reserve=ptasi raj|Green Bridge=most zielony|Cow Bridge=most krowi|Ołowianka Footbridge=kladka na olowianke,olowianka footbridge,footbridge|Imperial Shipyard=stocznia cesarska|Naturalists\' House=dom przyrodnikow,archaeological museum,muzeum archeologiczne|Stogi Beach=stogi|Brzeźno Beach=brzezno beach|Sobieszewo Island=wyspa sobieszewska,sobieszewo|Pachołek Hill=pacholek,wzgorze pacholek~Viewpoint over Oliwa|Bastion Żubr=zubr|Bastion of St. Gertrude=bastion sw gertrudy|Brewery Tower=baszta browarna|Anchor-makers\' Tower=baszta kotwicznikow|Cog Gate=brama kogi|Żuławy Gate=brama zulawska|St. Bartholomew\'s Church=kosciol sw bartlomieja|Old Scots Church=stare szkoty,kosciol sw ignacego|St. Anne\'s Chapel=kaplica sw anny|St. James\'s Church in Oliwa=kosciol sw jakuba w oliwie|Blue Lamb Granary=blekitny baranek,spichlerz blekitny baranek|House of the Abbots of Pelplin=dom opatow pelplinskich|Pod Łososiem=pod lososiem,goldwasser~Home of Goldwasser, the gold-flaked liqueur|Water Forge=kuznia wodna~In the Valley of Joy|Oliwa Cathedral organ=organy oliwskie,oliwa organ~Famous for its moving angels|Artus Court stove=piec w dworze artusa,tiled stove~One of the tallest tiled stoves in Europe|Town Hall Tower=wieza ratuszowa|Maritime Cultural Centre=osrodek kultury morskiej|Archdiocesan Museum=muzeum archidiecezjalne|Garnizon Kultury=garnizon|New Synagogue=synagoga,gdansk synagogue,synagoga wrzeszcz|Zieleniak|Łostowice Cemetery=cmentarz lostowicki|Günter Grass bench=gunter grass,grass monument~In Wrzeszcz, where Grass grew up|Nowy Port time ball=kula czasu,time ball~On top of the Nowy Port lighthouse|Beautiful Madonna=piekna madonna~In St. Mary\'s|Red Room=czerwona sala~In the Main Town Hall|St. Catherine\'s Carillon=carillon,karylion|City walls=mury obronne,defensive walls',
+k:'III LO Topolówka=topolowka,iii lo,3 lo,3rd high school,iii liceum~The school that organises GDNMUN|Fahrenheit\'s Thermometer=termometr fahrenheita,fahrenheit thermometer~The replica on Long Market. Fahrenheit was born in Gdańsk|100cznia=stocznia 100~Container food and culture spot in the shipyard|B90 Club=b90,klub b90~Concert hall in the old shipyard halls|Cemetery of Non-existent Cemeteries=cmentarz nieistniejacych cmentarzy~A memorial to Gdańsk\'s lost cemeteries|Wisła Śmiała=wisla smiala~A river mouth punched open by ice in 1840'
 }},
 
 {id:'syrc',tag:'UNSC · Syria',q:'Name a city or town in Syria',ctx:'The Security Council is debating "The situation in Syria".',l2:1,t:{
@@ -831,11 +872,11 @@ k:'Ugarit=ras shamra~Ancient city near Latakia|Dura-Europos=dura europos~Ancient
 
 {id:'ww1',tag:'AHC · WWI',q:'Name a leader, monarch, commander or famous figure of WWI',ctx:'In the Alternative Historical Committee, Germany won the Great War.',l2:1,t:{
 p:'Kaiser Wilhelm II=wilhelm ii,kaiser wilhelm,wilhelm,kaiser|Franz Ferdinand=archduke franz ferdinand',
-c:'Winston Churchill=churchill|Adolf Hitler=hitler~A corporal then, not a leader. Too clever',
+c:'Winston Churchill=churchill|Adolf Hitler=hitler~A corporal then, not a leader. Too clever|J. R. R. Tolkien=tolkien~Fought at the Somme|C. S. Lewis=cs lewis,lewis~Wounded at Arras|A. A. Milne=aa milne,milne~Signals officer at the Somme|Ernest Hemingway=hemingway~Ambulance driver in Italy|Charles de Gaulle=de gaulle~Wounded and captured at Verdun|Erwin Rommel=rommel~Won the Pour le Mérite in Italy|Benito Mussolini=mussolini~Served as a soldier|Harry Truman=truman~Artillery captain in France|Douglas MacArthur=macarthur|George S. Patton=patton~Led America\'s first tank units|Bernard Montgomery=montgomery,monty|Hermann Göring=goring,goering~Fighter ace, last commander of the Red Baron\'s unit|Rudolf Hess~Infantry soldier and pilot|Karl Dönitz=donitz,doenitz~U-boat commander|Marie Curie=curie~Ran mobile X-ray units',
 s:'Gavrilo Princip=princip|Woodrow Wilson=wilson|Nicholas II=tsar nicholas,nicholas,tsar nicholas ii|George V=king george v|Franz Joseph=franz josef,emperor franz joseph|Paul von Hindenburg=hindenburg|Ferdinand Foch=foch|Georges Clemenceau=clemenceau|David Lloyd George=lloyd george|Józef Piłsudski=pilsudski~Led the Polish Legions|Vladimir Lenin=lenin|Mata Hari|Lawrence of Arabia=t e lawrence,lawrence|Red Baron=manfred von richthofen,richthofen',
-r:'Erich Ludendorff=ludendorff|Douglas Haig=haig|Joseph Joffre=joffre|Philippe Pétain=petain|John J. Pershing=pershing|Herbert Kitchener=kitchener|Erich von Falkenhayn=falkenhayn|Helmuth von Moltke=moltke|August von Mackensen=mackensen|Conrad von Hötzendorf=conrad,hotzendorf|Enver Pasha=enver|Talaat Pasha=talaat|Djemal Pasha=cemal pasha,djemal|Mustafa Kemal=ataturk,mustafa kemal ataturk|Alexander Kerensky=kerensky|Leon Trotsky=trotsky|Raymond Poincaré=poincare|H. H. Asquith=asquith|Edward Grey=sir edward grey,grey|Karl I=charles i of austria,emperor karl|Mehmed V=sultan mehmed v|Albert I=king albert,albert i of belgium|Victor Emmanuel III=victor emmanuel|Vittorio Orlando=orlando|Luigi Cadorna=cadorna|Aleksei Brusilov=brusilov|Alfred von Tirpitz=tirpitz|John Jellicoe=jellicoe|David Beatty=beatty|Edmund Allenby=allenby|Faisal I=faisal,emir faisal|Hussein bin Ali=sharif hussein|Edith Cavell=cavell|Arthur Zimmermann=zimmermann,zimmermann telegram|Theobald von Bethmann Hollweg=bethmann hollweg|Roman Dmowski=dmowski|Ignacy Paderewski=paderewski|Józef Haller=haller,blue army|Tomáš Masaryk=masaryk|Eddie Rickenbacker=rickenbacker|Alvin York=sergeant york|Paul von Lettow-Vorbeck=lettow vorbeck,lettow-vorbeck|Otto Liman von Sanders=liman von sanders|Robert Nivelle=nivelle|Joseph Gallieni=gallieni|Eleftherios Venizelos=venizelos|Peter I of Serbia=king peter|Ferdinand I of Bulgaria=tsar ferdinand|Ferdinand I of Romania=king ferdinand|Grand Duke Nicholas=nikolai nikolaevich|Alexander Samsonov=samsonov|Paul von Rennenkampf=rennenkampf|John French=sir john french|Reinhard Scheer=scheer|Franz von Hipper=hipper|Max von Baden=prince max|Friedrich Ebert=ebert|Wilfred Owen~War poet|Siegfried Sassoon=sassoon~War poet|John McCrae=mccrae,in flanders fields',
-d:'Armando Diaz=diaz|Herbert Plumer=plumer|Henry Rawlinson=rawlinson|Julian Byng=byng|Hubert Gough=gough|Charles Townshend=townshend|John Monash=monash|Arthur Currie=currie|Charles Mangin=mangin|Édouard de Castelnau=castelnau|Max Hoffmann=hoffmann|Rupprecht of Bavaria=crown prince rupprecht,rupprecht|Crown Prince Wilhelm=kronprinz wilhelm|Alexander von Kluck=kluck|Karl von Bülow=bulow|Max von Gallwitz=gallwitz|Svetozar Boroević=boroevic|Oskar Potiorek=potiorek|Leopold Berchtold=berchtold|István Tisza=tisza|Ottokar Czernin=czernin|Sergey Sazonov=sazonov|Vladimir Sukhomlinov=sukhomlinov|Mikhail Alekseyev=alekseyev|Lavr Kornilov=kornilov|Nikolai Yudenich=yudenich|Radko Dimitriev=dimitriev|Nikola Zhekov=zhekov|Radomir Putnik=putnik|Živojin Mišić=misic|Dragutin Dimitrijević=apis|Queen Marie of Romania=queen marie|Ion Brătianu=bratianu|Constantine I of Greece=king constantine|Sidney Sonnino=sonnino|René Viviani=viviani|Bonar Law=andrew bonar law|Jacky Fisher=john fisher,fisher|Roger Casement=casement|Kurt Eisner=eisner|Rosa Luxemburg=luxemburg|Karl Liebknecht=liebknecht|Ernst Jünger=junger,storm of steel|Erich Maria Remarque=remarque~Wrote All Quiet on the Western Front|Billy Bishop=bishop|Roland Garros=garros|Georges Guynemer=guynemer|Oswald Boelcke=boelcke|Max Immelmann=immelmann|Anthony Fokker=fokker|Fritz Haber=haber~Pioneered chemical weapons|Carl Gustaf Mannerheim=mannerheim|Józef Dowbor-Muśnicki=dowbor musnicki|Edward Rydz-Śmigły=rydz smigly|Władysław Sikorski=sikorski|Kazimierz Sosnkowski=sosnkowski',
-k:'Wojciech Korfanty=korfanty|Nikolai Ivanov=ivanov|Hugo Junkers=junkers|Gustav Krupp=krupp|Big Bertha~A gun, not a person, but a legend|Stubby=sergeant stubby~A dog. A decorated war dog'
+r:'Erich Ludendorff=ludendorff|Douglas Haig=haig|Joseph Joffre=joffre|Philippe Pétain=petain|John J. Pershing=pershing|Herbert Kitchener=kitchener|Erich von Falkenhayn=falkenhayn|Helmuth von Moltke=moltke|August von Mackensen=mackensen|Conrad von Hötzendorf=conrad,hotzendorf|Enver Pasha=enver|Talaat Pasha=talaat|Djemal Pasha=cemal pasha,djemal|Mustafa Kemal=ataturk,mustafa kemal ataturk|Alexander Kerensky=kerensky|Leon Trotsky=trotsky|Raymond Poincaré=poincare|H. H. Asquith=asquith|Edward Grey=sir edward grey,grey|Karl I=charles i of austria,emperor karl|Mehmed V=sultan mehmed v|Albert I=king albert,albert i of belgium|Victor Emmanuel III=victor emmanuel|Vittorio Orlando=orlando|Luigi Cadorna=cadorna|Aleksei Brusilov=brusilov|Alfred von Tirpitz=tirpitz|John Jellicoe=jellicoe|David Beatty=beatty|Edmund Allenby=allenby|Faisal I=faisal,emir faisal|Hussein bin Ali=sharif hussein|Edith Cavell=cavell|Arthur Zimmermann=zimmermann,zimmermann telegram|Theobald von Bethmann Hollweg=bethmann hollweg|Roman Dmowski=dmowski|Ignacy Paderewski=paderewski|Józef Haller=haller,blue army|Tomáš Masaryk=masaryk|Eddie Rickenbacker=rickenbacker|Alvin York=sergeant york|Paul von Lettow-Vorbeck=lettow vorbeck,lettow-vorbeck|Otto Liman von Sanders=liman von sanders|Robert Nivelle=nivelle|Joseph Gallieni=gallieni|Eleftherios Venizelos=venizelos|Peter I of Serbia=king peter|Ferdinand I of Bulgaria=tsar ferdinand|Ferdinand I of Romania=king ferdinand|Grand Duke Nicholas=nikolai nikolaevich|Alexander Samsonov=samsonov|Paul von Rennenkampf=rennenkampf|John French=sir john french|Reinhard Scheer=scheer|Franz von Hipper=hipper|Max von Baden=prince max|Friedrich Ebert=ebert|Wilfred Owen~War poet|Siegfried Sassoon=sassoon~War poet|John McCrae=mccrae,in flanders fields|Grigori Rasputin=rasputin|Alexandra Feodorovna=tsarina alexandra,alexandra|Tsarevich Alexei=alexei|Felix Yusupov=yusupov~Killed Rasputin|Anton Denikin=denikin|Alexander Kolchak=kolchak|Pyotr Wrangel=wrangel|Mikhail Tukhachevsky=tukhachevsky~A POW alongside de Gaulle|Maria Bochkareva=bochkareva~Led the Women\'s Battalion of Death|Georgy Lvov=prince lvov|Pavel Milyukov=milyukov|Alexei Kuropatkin=kuropatkin|Nikola Pašić=pasic|Milunka Savić=savic~Serbia\'s most decorated woman soldier|Nicholas I of Montenegro=king nicholas|Alexander I of Yugoslavia=prince regent alexander|Aleksandar Stamboliyski=stamboliyski|Boris III=tsar boris|Ismet Inönü=inonu,ismet pasha|Mehmed VI=sultan mehmed vi|Michael Collins=collins~Fought in the 1916 Easter Rising|James Connolly=connolly|Patrick Pearse=pearse|Éamon de Valera=de valera|Mark Sykes=sykes,sykes picot|François Georges-Picot=georges picot,picot|Arthur Balfour=balfour,balfour declaration|Gertrude Bell=bell|Auda abu Tayi=auda|Abdullah I=emir abdullah|William Robertson=wully robertson|Ian Hamilton=sir ian hamilton~Commanded at Gallipoli|Horace Smith-Dorrien=smith dorrien|Hugh Trenchard=trenchard|Alfred Milner=milner|Lord Northcliffe=northcliffe|Albert Ball=ball|Mick Mannock=mannock|Robert Graves=graves|Isaac Rosenberg=rosenberg|Edward Thomas~War poet|Vera Brittain=brittain|Laurence Binyon=binyon~Wrote For the Fallen|Rudyard Kipling=kipling|Walter Tull=tull|Noel Chavasse=chavasse~Double VC|Emmeline Pankhurst=pankhurst|Flora Sandes=sandes~British woman who fought in the Serbian army|Elsie Inglis=inglis|Paul Nash=nash|Jack Cornwell=cornwell~Boy VC at Jutland|Roger Keyes=keyes|Mansfield Smith-Cumming=smith cumming,c~The first C of MI6|Sidney Reilly=reilly|Jan Smuts=smuts|Louis Botha=botha|William Birdwood=birdwood|John Simpson Kirkpatrick=simpson and his donkey,simpson|Billy Hughes=hughes|Robert Borden=borden|Aristide Briand=briand|Jean Jaurès=jaures|Maxime Weygand=weygand|Louis Franchet d\'Espèrey=franchet desperey,franchet d esperey|René Fonck=fonck|Charles Nungesser=nungesser|Guillaume Apollinaire=apollinaire|Robert Lansing=lansing|Edward House=colonel house|William Jennings Bryan=bryan|Henry Johnson=henry johnson~Harlem Hellfighters|Eugene Bullard=bullard|Billy Mitchell=billy mitchell|Eugene Debs=debs|Jeannette Rankin=rankin|Herbert Hoover=hoover~Ran food relief for Belgium|Antonio Salandra=salandra|Giovanni Giolitti=giolitti|Pietro Badoglio=badoglio|Francesco Baracca=baracca|Cesare Battisti=battisti|Giuseppe Ungaretti=ungaretti|Gabriele D\'Annunzio=dannunzio,d annunzio|Yuan Shikai=yuan|Milan Rastislav Štefánik=stefanik|Pope Benedict XV=benedict xv|Maximilian von Spee=von spee,spee|Felix von Luckner=luckner,sea devil|Walther Schwieger=schwieger~Sank the Lusitania|Werner Voss=voss|Ernst Udet=udet|Ferdinand von Zeppelin=zeppelin|Otto Dix=dix|Käthe Kollwitz=kollwitz|Franz Marc=marc|Walther Rathenau=rathenau|Philipp Scheidemann=scheidemann|Matthias Erzberger=erzberger~Signed the armistice|Wilhelm Groener=groener|Oskar von Hutier=hutier|Colmar von der Goltz=von der goltz,goltz|Wilhelm Souchon=souchon~Took the Goeben to Constantinople|Karl von Stürgkh=sturgkh|Miklós Horthy=horthy|Georg von Trapp=von trapp,trapp~Yes, the Sound of Music captain. A U-boat ace|Ludwig Wittgenstein=wittgenstein|Empress Zita=zita|Sophie Chotek=sophie,duchess of hohenberg|Nedeljko Čabrinović=cabrinovic|Hans von Beseler=beseler~German governor-general in Warsaw',
+d:'Armando Diaz=diaz|Herbert Plumer=plumer|Henry Rawlinson=rawlinson|Julian Byng=byng|Hubert Gough=gough|Charles Townshend=townshend|John Monash=monash|Arthur Currie=currie|Charles Mangin=mangin|Édouard de Castelnau=castelnau|Max Hoffmann=hoffmann|Rupprecht of Bavaria=crown prince rupprecht,rupprecht|Crown Prince Wilhelm=kronprinz wilhelm|Alexander von Kluck=kluck|Karl von Bülow=bulow|Max von Gallwitz=gallwitz|Svetozar Boroević=boroevic|Oskar Potiorek=potiorek|Leopold Berchtold=berchtold|István Tisza=tisza|Ottokar Czernin=czernin|Sergey Sazonov=sazonov|Vladimir Sukhomlinov=sukhomlinov|Mikhail Alekseyev=alekseyev|Lavr Kornilov=kornilov|Nikolai Yudenich=yudenich|Radko Dimitriev=dimitriev|Nikola Zhekov=zhekov|Radomir Putnik=putnik|Živojin Mišić=misic|Dragutin Dimitrijević=apis|Queen Marie of Romania=queen marie|Ion Brătianu=bratianu|Constantine I of Greece=king constantine|Sidney Sonnino=sonnino|René Viviani=viviani|Bonar Law=andrew bonar law|Jacky Fisher=john fisher,fisher|Roger Casement=casement|Kurt Eisner=eisner|Rosa Luxemburg=luxemburg|Karl Liebknecht=liebknecht|Ernst Jünger=junger,storm of steel|Erich Maria Remarque=remarque~Wrote All Quiet on the Western Front|Billy Bishop=bishop|Roland Garros=garros|Georges Guynemer=guynemer|Oswald Boelcke=boelcke|Max Immelmann=immelmann|Anthony Fokker=fokker|Fritz Haber=haber~Pioneered chemical weapons|Carl Gustaf Mannerheim=mannerheim|Józef Dowbor-Muśnicki=dowbor musnicki|Edward Rydz-Śmigły=rydz smigly|Władysław Sikorski=sikorski|Kazimierz Sosnkowski=sosnkowski|Archduke Friedrich=archduke frederick|Archduke Joseph August|Archduke Eugen|Arthur Arz von Straussenburg=arz,arz von straussenburg|Viktor Dankl=dankl|Moritz von Auffenberg=auffenberg|Hermann Kövess=kovess|Karl von Pflanzer-Baltin=pflanzer baltin|Eduard von Böhm-Ermolli=bohm ermolli|Alexander von Krobatin=krobatin|Friedrich Adler=adler|István Burián=burian|Anton Haus=haus|Gottfried von Banfield=banfield,eagle of trieste|Danilo Ilić=ilic|Muhamed Mehmedbašić=mehmedbasic|Trifko Grabež=grabez|Bolesław Wieniawa-Długoszowski=wieniawa,wieniawa dlugoszowski|Władysław Belina-Prażmowski=belina,belina prazmowski|Stanisław Szeptycki=szeptycki|Ignacy Daszyński=daszynski|Wincenty Witos=witos|Kazım Karabekir=karabekir|Fevzi Çakmak=cakmak|Halil Kut=halil pasha|Ahmed Izzet Pasha=ahmed izzet|Said Halim Pasha=said halim|Fakhri Pasha=fahreddin pasha,fakhri|Vehip Pasha=vehip|Vasil Radoslavov=radoslavov|Vladimir Vazov=vazov|Mikhail Rodzianko=rodzianko|Alexander Guchkov=guchkov|Ivan Goremykin=goremykin|Boris Stürmer=sturmer|Alexander Protopopov=protopopov|Nikolai Yanushkevich=yanushkevich|Yakov Zhilinsky=zhilinsky|Nikolai Ruzsky=ruzsky|Alexei Evert=evert|Grand Duke Michael Alexandrovich=grand duke michael|Nikolai Dukhonin=dukhonin|Nikolai Krylenko=krylenko|Henry Wilson=sir henry wilson|Maurice Hankey=hankey|Edward Carson=carson|Aylmer Hunter-Weston=hunter weston|Frederick Stanley Maude=maude|Archibald Murray=archibald murray|James McCudden=mccudden|Lanoe Hawker=hawker|Henry Moseley=moseley~Physicist killed at Gallipoli|Ernest Swinton=swinton~Helped invent the tank|Stanley Spencer=spencer|Edward VIII=prince of wales,edward prince of wales|Elsie Knocker=knocker|Mairi Chisholm=chisholm|Christopher Cradock=cradock|Doveton Sturdee=sturdee|Harold Macmillan=macmillan|Clement Attlee=attlee|Anthony Eden=eden|Charles Bean=bean|Albert Jacka=jacka|Harry Chauvel=chauvel|Bernard Freyberg=freyberg|Sam Hughes=sam hughes|Francis Pegahmagabow=pegahmagabow|Khudadad Khan=khudadad~First Indian-born VC|Karl von Müller=von muller~Captain of SMS Emden|Hellmuth von Mücke=von mucke|Otto Weddigen=weddigen|Lothar von Arnauld de la Perière=arnauld de la periere~Top-scoring U-boat ace ever|Lothar von Richthofen=lothar richthofen|Rudolf Berthold=berthold|Peter Strasser=strasser~Zeppelin chief|August Macke=macke|Ernst Toller=toller|Gustav Stresemann=stresemann|Georg Michaelis=michaelis|Georg von Hertling=hertling|Gottlieb von Jagow=jagow|Richard von Kühlmann=kuhlmann|Hans von Seeckt=seeckt|Otto von Below=otto von below|Georg von der Marwitz=marwitz|Max von Boehn=boehn|Albrecht of Württemberg=duke albrecht|Felix von Bothmer=bothmer|Alexander von Linsingen=linsingen|Prince Leopold of Bavaria=prince leopold|Friedrich Kress von Kressenstein=kress von kressenstein|Hermann von François=von francois|Alexandre Millerand=millerand|Joseph Caillaux=caillaux|Paul Painlevé=painleve|Louis Malvy=malvy|Maurice Sarrail=sarrail|Michel-Joseph Maunoury=maunoury|Fernand de Langle de Cary=langle de cary|Henri Gouraud=gouraud|Marie-Émile Fayolle=fayolle|Henri Berthelot=berthelot|Émile Driant=driant|Henri Barbusse=barbusse|Blaise Cendrars=cendrars|Louise de Bettignies=de bettignies|Gabrielle Petit=petit|Quentin Roosevelt=roosevelt|Newton Baker=newton baker|Peyton March=peyton march|Charles Whittlesey=whittlesey~Commander of the Lost Battalion|James Reese Europe=james europe|Frank Luke=frank luke|Raoul Lufbery=lufbery|John Lejeune=lejeune|John Dos Passos=dos passos|Alan Seeger=seeger|Joyce Kilmer=kilmer|Emma Goldman=goldman|George Creel=creel|Paolo Boselli=boselli|Luigi Capello=capello|Duke of Aosta=emanuele filiberto|Enrico Toti=toti|Nazario Sauro=sauro|Luigi Rizzo=rizzo~Sank the battleship Szent István|Stepa Stepanović=stepanovic|Petar Bojović=bojovic|Alexandru Averescu=averescu|Constantin Prezan=prezan|Ecaterina Teodoroiu=teodoroiu|Gérard Leman=leman~Defended Liège|Charles de Broqueville=broqueville|Cardinal Mercier=mercier|Queen Elisabeth of Belgium=queen elisabeth|Sidónio Pais=pais|Ōkuma Shigenobu=okuma|Katō Takaaki=kato|Wellington Koo=koo|Andranik Ozanian=andranik|Ibn Saud=abdulaziz ibn saud|John Kipling=john kipling',
+k:'Wojciech Korfanty=korfanty|Nikolai Ivanov=ivanov|Hugo Junkers=junkers|Gustav Krupp=krupp|Big Bertha~A gun, not a person, but a legend|Stubby=sergeant stubby~A dog. A decorated war dog|Leopold Lojka=lojka~Drove Franz Ferdinand\'s car in Sarajevo|Franz von Harrach=harrach~Owned the car, and rode on its running board|Aleksander Kakowski=kakowski~Member of the Polish Regency Council|Zdzisław Lubomirski=lubomirski~Regency Council|Józef Ostrowski=ostrowski~Regency Council|Raoul Villain=villain~Assassinated Jean Jaurès|Sylvain-Eugène Raynal=raynal~Held Fort Vaux at Verdun|Louis Barthas=barthas~Barrel-maker whose diaries became a classic|Aníbal Milhais=milhais,soldado milhoes~Portugal\'s Soldier Millions|Walt Disney=disney~Red Cross ambulance driver in 1918|Cher Ami~A pigeon who saved the Lost Battalion'
 }},
 
 {id:'trib',tag:'ICC · Tribunals',q:'Name a person tried, indicted or wanted by an international criminal court or tribunal',ctx:'ICC, Yugoslavia and Rwanda tribunals, Nuremberg, Tokyo, Sierra Leone, Cambodia… The ICC committee is running Prosecutor v. Bemba.',l2:1,t:{
@@ -919,16 +960,24 @@ function buildPrompt(p){
   return p;
 }
 P.forEach(buildPrompt);
-function match(p,input){
+function phon(s){return s.replace(/ph/g,'f').replace(/ck/g,'k').replace(/[qc]/g,'k').replace(/w/g,'v').replace(/[yj]/g,'i').replace(/z/g,'s').replace(/h/g,'').replace(/(.)\1+/g,'$1');}
+function judge(p,input){
   const x=norm(input); if(!x)return null; const xc=x.replace(/ /g,'');
-  for(const e of p.list){ if(e.keys.includes(x)||e.keys.includes(xc)) return e; }
-  let best=null,bd=99;
-  for(const e of p.list){ for(const k of e.keys){
-    const allow=k.length<=4?0:k.length<=7?1:2; if(Math.abs(k.length-x.length)>allow)continue;
-    const d=lev(x,k); if(d<=allow&&d<bd){bd=d;best=e;}
+  for(const en of p.list){ if(en.keys.includes(x)||en.keys.includes(xc)) return {type:'exact',e:en}; }
+  let best=null,bs=9;
+  for(const en of p.list){ for(const k of en.keys){
+    if(k.length<3)continue; let sc=9;
+    if(phon(x)===phon(k)) sc=0.05;
+    const d=lev(x,k), L=Math.max(k.length,x.length);
+    if(k.length>=5){ if(d<=4&&d/L<=0.34) sc=Math.min(sc,d/L); }
+    else if(x.length>=3&&d<=1) sc=Math.min(sc,0.3);
+    if(x.length>=4&&k.startsWith(x)&&x.length/k.length>=0.5) sc=Math.min(sc,0.25);
+    if(x.length>=5&&k.length>x.length&&(' '+k+' ').includes(' '+x+' ')) sc=Math.min(sc,0.3);
+    if(sc<bs){bs=sc;best=en;}
   }}
-  return best;
+  return best?{type:'suggest',e:best}:null;
 }
+function match(p,input){const j=judge(p,input);return j?j.e:null;}
 
 </script>
 <script src="config.js"></script>
@@ -950,6 +999,9 @@ function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMo
 function rng(seed){let h=1779033703^seed.length;for(let i=0;i<seed.length;i++){h=Math.imul(h^seed.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296;};}
 function shuffle(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function cyrb(str,seed=7){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);}
+const RESET_ID=String((typeof window.GDNK_RESET!=='undefined'&&window.GDNK_RESET)||'0');
+function wipeLocal(){try{Object.keys(localStorage).filter(k=>k.startsWith('gdnk-done-')||k==='gdnk-runs'||k==='gdnk-pending').forEach(k=>localStorage.removeItem(k));}catch(e){}}
+try{if(localStorage.getItem('gdnk-reset')!==RESET_ID){wipeLocal();localStorage.setItem('gdnk-reset',RESET_ID);}}catch(e){}
 const codeNorm=s=>(s||'').toLowerCase().replace(/\s+/g,'');
 const L2_HASH='12zqpsqe1tp', DEV_HASH='2bwm88dhujs', L2_ENC='IAAABBkCSQkHCQUC';
 function decodeL2(key){const b=atob(L2_ENC);let o='';for(let i=0;i<b.length;i++)o+=String.fromCharCode(b.charCodeAt(i)^key.charCodeAt(i%key.length));return o;}
@@ -1030,6 +1082,18 @@ async function readRemote(){
 }
 setTimeout(flushPending,1500);
 
+// ===== autocorrect: "did you mean…?" =====
+function askSuggest(boxId,entry,onYes,onNo){
+  const box=$(boxId);
+  box.innerHTML=`Did you mean <b>${esc(entry.name)}</b>?<div class="row2"><button type="button" class="yes">Yes, that one</button><button type="button" class="no">No</button></div>`;
+  box.classList.remove('hide');
+  box.querySelector('.yes').onclick=()=>{box.classList.add('hide');onYes(entry);};
+  box.querySelector('.no').onclick=()=>{box.classList.add('hide');onNo();};
+}
+function hideSug(id){$(id).classList.add('hide');}
+$('inp').addEventListener('input',()=>hideSug('sug'));
+$('pInp').addEventListener('input',()=>hideSug('pSug'));
+
 // ===== LEVEL 1 =====
 const TIME=25; let G=null;
 function validNick(s){const parts=s.trim().split(/\s+/);return parts.length>=2&&parts.every(p=>/^[\p{L}][\p{L}'’.-]*$/u.test(p))&&parts[0].length>=2&&parts[parts.length-1].length>=2;}
@@ -1071,9 +1135,12 @@ function loadPrompt(){
 $('form').addEventListener('submit',e=>{
   e.preventDefault(); if(!G||G.locked)return;
   const v=$('inp').value.trim(); if(!v)return;
-  const m=match(G.prompts[G.i],v);
-  if(m)finishL1(m);
-  else{$('nope').textContent=`"${v}" isn't on the list. Try another!`;const f=$('form');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');$('inp').select();}
+  const j=judge(G.prompts[G.i],v);
+  const miss=()=>{$('nope').textContent=`"${v}" isn't on the list. Try another!`;const f=$('form');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');$('inp').select();};
+  $('nope').textContent='';
+  if(!j)return miss();
+  if(j.type==='exact')return finishL1(j.e);
+  askSuggest('sug',j.e,en=>{if(G&&!G.locked)finishL1(en);},()=>{miss();try{$('inp').focus();}catch(e){}});
 });
 $('giveUp').addEventListener('click',()=>{if(G&&!G.locked)finishL1(null,false);});
 function tierList(p,mine){
@@ -1081,16 +1148,13 @@ function tierList(p,mine){
     return `<div class="t"><h4 style="color:${T[k].c}">${T[k].e} ${T[k].n} · ${T[k].pts} · ${items.length}</h4><div>${items.map(e=>`<span class="${e.name===mine?'me':''}">${esc(e.name)}</span>`).join(' · ')}</div></div>`;}).join('')+`</div>`;
 }
 function finishL1(hit,timeout){
-  G.locked=true; cancelAnimationFrame(G.raf);
+  G.locked=true; cancelAnimationFrame(G.raf); hideSug('sug');
   const p=G.prompts[G.i]; $('inp').disabled=true; try{$('inp').blur();}catch(e){}
   let pts=0,html='';
   if(hit){const t=T[hit.tier];pts=t.pts;G.depth+=pts*10;
     html=`<div class="result" style="border-color:${t.c}55"><div class="emo">${t.e}</div><div class="tier" style="color:${t.c}">${t.n}</div><div class="pts">+${pts} pts · +${pts*10} m</div><div class="your">${esc(hit.name)}</div>${hit.note?`<div class="note">${esc(hit.note)}</div>`:''}</div>`;}
   else html=`<div class="result"><div class="emo">🌊</div><div class="tier" style="color:var(--bad)">${timeout?'Out of air':'Surfaced'}</div><div class="pts">+0 pts</div></div>`;
-  const kr=p.list.filter(e=>e.tier==='k').slice(0,6);
-  if(kr.length)html+=`<div class="rares"><b>${T.k.e} One in a Krillion:</b> ${kr.map(e=>esc(e.name)).join(', ')}${p.list.filter(e=>e.tier==='k').length>6?'…':''}</div>`;
-  html+=`<details><summary>See all ${p.list.length} accepted answers</summary>${tierList(p,hit&&hit.name)}</details>`;
-  if(p.foot)html+=`<p class="muted" style="font-size:13px;margin-top:12px">${esc(p.foot)}</p>`;
+  html+=`<p class="muted" style="font-size:13px;margin-top:12px;text-align:center">All the answers are revealed at the end of the dive.</p>`;
   $('resBox').innerHTML=html; $('resBox').classList.remove('hide'); $('askBox').classList.add('hide');
   G.res.push({p,hit,pts});
   $('depthNum').textContent=G.depth.toLocaleString('en-US'); setDepth(G.depth);
@@ -1104,7 +1168,7 @@ function endL1(){
   $('endPts').textContent=`${total} / 700 points`; $('endEmo').textContent=emo; $('endRank').textContent=rankFor(total*10);
   $('endKicker').textContent=(G.scored?'Daily Dive · ':'Practice run · ')+todayKey();
   $('recap').innerHTML=G.res.map(r=>{const best=r.p.list.find(e=>e.tier==='k')||r.p.list.find(e=>e.tier==='d');
-    return `<tr><td><div style="color:var(--dim);font-size:12px">${esc(r.p.tag)}</div>${r.hit?esc(r.hit.name):'<span style="color:var(--bad)">—</span>'}<div style="color:var(--dim);font-size:12px">Deepest: ${esc(best?best.name:'')}</div></td><td class="r">${r.hit?T[r.hit.tier].e+' '+r.pts:'0'}</td></tr>`;}).join('');
+    return `<tr><td><div style="color:var(--dim);font-size:12px">${esc(r.p.tag)}</div>${r.hit?esc(r.hit.name):'<span style="color:var(--bad)">—</span>'}<div style="color:var(--dim);font-size:12px">Deepest: ${esc(best?best.name:'')}</div><details><summary>All ${r.p.list.length} answers</summary>${tierList(r.p,r.hit&&r.hit.name)}${r.p.foot?`<p class="muted" style="font-size:12px;margin-top:8px">${esc(r.p.foot)}</p>`:''}</details></td><td class="r">${r.hit?T[r.hit.tier].e+' '+r.pts:'0'}</td></tr>`;}).join('');
   G.share=`GDNKrillion 🌊 ${todayKey()}\n${emo}\n${total} pts · ${(total*10).toLocaleString('en-US')} m\nGDNMUN 2026 · Gdańsk`;
   if(G.scored){const run={nick:G.nick,total,emo,date:todayKey(),src:'device'};ls(doneKey(G.nick),{total,emo});saveLocalRun(run);pushShared(run);pushRemote(run);}
   show('end');
@@ -1134,7 +1198,7 @@ $('startParty').addEventListener('click',()=>{
 function startParty(names){
   const players=names.map((n,i)=>n?{name:n,seat:SEATS[i],hearts:2,pts:0,answers:0,outAt:null}:null).filter(Boolean);
   const deckSrc=P.filter(p=>p.l2);
-  PG={players,deck:shuffle(deckSrc,Math.random),di:0,cur:0,round:0,outOrder:[],locked:true};
+  PG={players,deck:shuffle(deckSrc,Math.random),di:0,cur:0,round:0,outOrder:[],locked:true,played:[]};
   show('party'); newPrompt(0);
 }
 function alive(){return PG.players.filter(p=>p.hearts>0);}
@@ -1170,27 +1234,32 @@ function startTurn(first){
 $('pForm').addEventListener('submit',e=>{
   e.preventDefault(); if(!PG||PG.locked)return;
   const v=$('pInp').value.trim(); if(!v)return;
-  const m=match(PG.p,v);
+  const j=judge(PG.p,v);
   const bad=msg=>{$('pNope').textContent=msg;const f=$('pForm');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');$('pInp').select();};
-  if(!m)return bad(`"${v}" isn't on the list. Quick, another!`);
-  if(PG.used.has(m.name))return bad(`${m.name} was already said!`);
-  PG.locked=true; cancelAnimationFrame(PG.raf);
+  $('pNope').textContent='';
+  if(!j)return bad(`"${v}" isn't on the list. Quick, another!`);
+  if(PG.used.has(j.e.name))return bad(`${j.e.name} was already said!`);
+  if(j.type==='suggest')return askSuggest('pSug',j.e,en=>{if(!PG.locked)acceptParty(en);},()=>{bad(`"${v}" isn't on the list. Quick, another!`);try{$('pInp').focus();}catch(e){}});
+  acceptParty(j.e);
+});
+function acceptParty(m){
+  PG.locked=true; cancelAnimationFrame(PG.raf); hideSug('pSug');
   PG.used.add(m.name); PG.usedList.push(m);
   const pl=PG.players[PG.cur]; pl.pts+=T[m.tier].pts; pl.answers++;
   $('pFlash').innerHTML=`<span style="color:${T[m.tier].c}">${T[m.tier].e} ${T[m.tier].n}</span> · ${esc(pl.name)}: ${esc(m.name)} <span class="muted">+${T[m.tier].pts}</span>`;
   renderUsed();
   PG.cur=nextAliveFrom(PG.cur); startTurn(false);
-});
+}
 $('pPass').addEventListener('click',()=>{if(PG&&!PG.locked)failTurn(false);});
 function failTurn(timeout){
-  PG.locked=true; cancelAnimationFrame(PG.raf); clearTimeout(PG.hand);
+  PG.locked=true; cancelAnimationFrame(PG.raf); clearTimeout(PG.hand); hideSug('pSug');
   const pl=PG.players[PG.cur]; pl.hearts--;
   let msg=`💔 <b>${esc(pl.name)}</b> ${timeout?'ran out of time':'passed'} and loses a heart.`;
   if(pl.hearts<=0){pl.outAt=PG.round;PG.outOrder.push(pl);msg+=` <b style="color:var(--bad)">Out of air!</b>`;}
   const left=PG.p.list.filter(e=>!PG.used.has(e.name));
-  const ideas=shuffle(left.filter(e=>e.tier==='k'||e.tier==='d'),Math.random).slice(0,4);
   const exhausted=!left.length;
-  $('pRes').innerHTML=`<div class="result"><div style="font-size:15px">${msg}</div>${exhausted?'<div class="note">Every answer on the list was used. Brutal.</div>':ideas.length?`<div class="note">Still on the table: ${ideas.map(e=>esc(e.name)).join(', ')}</div>`:''}<div class="note">${PG.used.size} answers this round · ${left.length} left unsaid</div></div>`;
+  PG.played.push({p:PG.p,used:[...PG.used]});
+  $('pRes').innerHTML=`<div class="result"><div style="font-size:15px">${msg}</div>${exhausted?'<div class="note">Every answer on the list was used. Brutal.</div>':''}<div class="note">${PG.used.size} answers this round · ${left.length} left unsaid. All answers are revealed at the end.</div></div>`;
   $('pRes').classList.remove('hide'); $('pAsk').classList.add('hide'); $('pFlash').textContent='';
   renderPlayers();
   const failIdx=PG.cur;
@@ -1203,6 +1272,7 @@ function endParty(){
   $('winName').textContent=winner.name; $('winSeat').textContent=`${winner.seat} · ${winner.pts} pts · ${winner.answers} answers`;
   const order=[...al,...PG.outOrder.slice().reverse()];
   $('standings').innerHTML=`<tr><th>#</th><th>Delegate</th><th class="r">Answers</th><th class="r">Pts</th></tr>`+order.map((p,i)=>`<tr><td>${i===0?'🏆':i+1}</td><td>${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.seat)}${p.outAt?' · out on prompt '+p.outAt:''}</div></td><td class="r">${p.answers}</td><td class="r">${p.pts}</td></tr>`).join('');
+  $('pAnswers').innerHTML=PG.played.map((r,i)=>`<div class="guideq"><span class="chip">Prompt ${i+1} · ${esc(r.p.tag)}</span><h3>${esc(r.p.q)}</h3><div class="muted" style="font-size:13px">${r.used.length} said this round</div><details><summary>All ${r.p.list.length} answers</summary>${tierList(r.p,null)}</details></div>`).join('');
   show('pend');
 }
 $('rematch').addEventListener('click',()=>startParty(ls('gdnk-seats')||[]));
@@ -1219,6 +1289,7 @@ $('devForm').addEventListener('submit',e=>{e.preventDefault();const c=codeNorm($
 function openDev(){ $('devCode').textContent=decodeL2(DEVKEY); show('dev'); loadLb(); }
 $('copyCode').addEventListener('click',()=>copy($('devCode').textContent));
 $('refreshLb').addEventListener('click',loadLb);
+$('wipeDev').addEventListener('click',()=>{const b=$('wipeDev');if(b.dataset.arm!=='1'){b.dataset.arm='1';b.querySelector('small').textContent='Tap again to confirm';setTimeout(()=>{b.dataset.arm='';b.querySelector('small').textContent='Clears today\'s dives and local scores on this phone or tablet';},4000);return;}b.dataset.arm='';wipeLocal();toast('This device was reset');loadLb();});
 $('devOut').addEventListener('click',()=>{DEVKEY=null;show('home');});
 async function loadLb(){
   $('lb').innerHTML='<tr><td class="muted">Loading…</td></tr>';
