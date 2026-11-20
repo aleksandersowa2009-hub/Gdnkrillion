@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GDNKrillion">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050a14">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<title>GDNKrillion — GDNMUN 2026 rare-answer trivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--abyss:#050a14;--ink:#e8f3ff;--dim:#8fa7c4;--line:rgba(160,200,255,.16);--card:rgba(10,24,44,.78);--accent:#5ee0ff;--gold:#ffe066;--bad:#ff6b6b;--lechia:#0e7a3c;--sink:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--abyss)}
+body{min-height:100vh}
+body{font-family:'Space Grotesk',system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,#0b4f7a 0%,#083358 30%,#051a33 65%,var(--abyss) 100%);background-attachment:fixed;overflow-x:hidden}
+#dark{position:fixed;inset:0;background:var(--abyss);opacity:0;pointer-events:none;transition:opacity 1.4s ease;z-index:0}
+#rays{position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.035) 0 40px,transparent 40px 110px);mask-image:linear-gradient(180deg,#000,transparent 55%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 55%);transition:opacity 1.4s}
+.bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bubbles span{position:absolute;bottom:-20px;border-radius:50%;border:1px solid rgba(200,235,255,.35);background:rgba(200,235,255,.06);animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-110vh) translateX(20px)}}
+.wrap{position:relative;z-index:2;max-width:560px;margin:0 auto;padding:max(22px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(60px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
+button,a,input,label{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body{-webkit-text-size-adjust:100%}
+body.sinker .wrap{padding-right:84px}
+@media(min-width:760px){body.sinker .wrap{padding-right:18px}}
+h1{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(38px,11vw,58px);line-height:.95;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--gold)}
+h2{font-family:'Fraunces',serif;font-weight:600;font-size:24px;line-height:1.15}
+.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
+p{line-height:1.5}.muted{color:var(--dim)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.stack>*+*{margin-top:14px}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+.btn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:16px 18px;border-radius:14px;background:rgba(94,224,255,.1);border:1px solid rgba(94,224,255,.35);color:var(--ink);font-weight:700;font-size:17px;text-align:left}
+.btn small{display:block;font-weight:400;font-size:13px;color:var(--dim);margin-top:2px}
+.btn.primary{background:var(--accent);color:#03202e;border-color:var(--accent)}.btn.primary small{color:#0a4a5f}
+.btn.gold{background:linear-gradient(135deg,#ffe066,#ffb84d);color:#2b1d00;border-color:#ffd25e}.btn.gold small{color:#5b4300}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:active{transform:scale(.99)}
+.hide{display:none!important}
+.chip{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--dim);letter-spacing:.04em}
+input[type=text],input[type=password]{width:100%;min-width:0;font:inherit;font-size:18px;padding:14px;border-radius:12px;border:1px solid rgba(94,224,255,.4);background:rgba(3,14,28,.85);color:var(--ink);outline:none}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(94,224,255,.18)}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.hud{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;gap:8px}
+.depth{font-family:'Fraunces',serif;font-size:30px;font-weight:800;line-height:1}
+.depth small{font-family:'Space Grotesk';font-size:12px;color:var(--dim);font-weight:500;display:block;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.pips{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.pips i{width:18px;height:8px;border-radius:4px;background:rgba(255,255,255,.12)}
+.pips i.on{background:var(--accent)}.pips i.done{background:rgba(94,224,255,.45)}
+.prompt{font-family:'Fraunces',serif;font-size:clamp(22px,6.2vw,30px);font-weight:600;line-height:1.15;margin:10px 0 8px}
+.timer{height:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;margin:16px 0 14px}
+.timer div{height:100%;width:100%;background:linear-gradient(90deg,var(--accent),#a6f4ff);transform-origin:left}
+.timer.low div{background:var(--bad)}
+form.ans{display:flex;gap:8px}
+.go{padding:0 18px;border-radius:12px;background:var(--accent);color:#03202e;font-weight:700;font-size:16px;flex:none}
+.skip{background:none;color:var(--dim);font-size:14px;text-decoration:underline;margin-top:10px}
+.nope{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.result{border-radius:16px;padding:18px;text-align:center;border:1px solid var(--line);background:rgba(0,0,0,.25);animation:pop .4s ease}
+@keyframes pop{from{transform:scale(.92);opacity:0}}
+.result .emo{font-size:46px;line-height:1}
+.result .tier{font-family:'Fraunces',serif;font-size:26px;font-weight:800;margin-top:6px}
+.result .pts{font-size:14px;color:var(--dim);margin-top:2px}
+.result .your{margin-top:10px;font-size:17px}
+.result .note{margin-top:6px;font-size:14px;color:var(--dim)}
+.rares{margin-top:14px;text-align:left;font-size:14px}
+.tierlist .t{margin-top:10px}
+.tierlist .t h4{font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px}
+.tierlist .t div{font-size:14px;color:var(--dim);line-height:1.5}
+.tierlist .t div span.me{color:var(--ink);font-weight:700;text-decoration:underline}
+details summary{cursor:pointer;color:var(--accent);font-size:14px;margin-top:12px}
+.big{font-family:'Fraunces',serif;font-size:56px;font-weight:800;line-height:1;color:var(--gold)}
+.emorow{font-size:28px;letter-spacing:4px;margin:10px 0}
+table.recap{width:100%;border-collapse:collapse;font-size:14px}
+table.recap td,table.recap th{padding:9px 4px;border-top:1px solid var(--line);vertical-align:top;text-align:left}
+table.recap th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-top:0}
+table.recap td.r,table.recap th.r{text-align:right;white-space:nowrap}
+.legend{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;font-size:14px;align-items:center}
+.legend .p{color:var(--dim);text-align:right}
+footer{margin-top:28px;font-size:12px;color:var(--dim);line-height:1.5}
+footer a,footer button{color:var(--dim);font-size:12px;text-decoration:underline;background:none}
+.lvl{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.lvl b{font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:rgba(94,224,255,.15);color:var(--accent)}
+.lvl b.l2{background:rgba(255,224,102,.15);color:var(--gold)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--accent);color:#03202e;padding:10px 16px;border-radius:999px;font-weight:700;z-index:50;max-width:90vw;text-align:center}
+/* modal */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(2,6,14,.75);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal .card{width:100%;max-width:400px}
+/* seats */
+.seats{display:grid;grid-template-columns:1fr;gap:8px}
+.seat{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(3,14,28,.6)}
+.seat .com{flex:none;width:92px;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--gold)}
+.seat input{font-size:16px;padding:10px;border-radius:10px}
+.players{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pl{padding:6px 9px;border-radius:10px;border:1px solid var(--line);background:rgba(3,14,28,.6);font-size:13px;line-height:1.2}
+.pl small{display:block;font-size:10px;color:var(--gold);letter-spacing:.06em}
+.pl.cur{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,224,102,.35)}
+.pl.out{opacity:.35;text-decoration:line-through}
+.turn{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-top:12px}
+.turn span{color:var(--gold)}
+.used{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.used span{font-size:12px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--dim)}
+.flash{font-size:15px;min-height:22px;margin-top:8px}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:.06em;padding:12px 14px;border-radius:12px;background:rgba(255,224,102,.1);border:1px dashed var(--gold);color:var(--gold);text-align:center;margin:10px 0}
+.guideq{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.guideq h3{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin:4px 0 2px}
+/* sinking figure */
+#sinkTrack{position:fixed;top:0;right:env(safe-area-inset-right);width:80px;height:var(--vh,100vh);z-index:1;pointer-events:none}
+@media(min-width:760px){#sinkTrack{right:calc(50% - 360px)}}
+#sinkTrack .rule{position:absolute;right:6px;top:84px;bottom:110px;width:1px;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.05))}
+#sinkTrack .tick{position:absolute;right:10px;font-size:9px;color:rgba(200,230,255,.45);letter-spacing:.04em;transform:translateY(-50%)}
+#diver{position:absolute;left:2px;width:62px;top:calc(60px + (var(--vh,100vh) - 210px) * var(--sink));transition:top 2.2s cubic-bezier(.4,.1,.3,1)}
+#diver svg{width:62px;height:auto;display:block;animation:sway 4.5s ease-in-out infinite;transform-origin:50% 20%}
+@media(min-width:760px){#sinkTrack{width:100px}#diver svg{width:84px}}
+@keyframes sway{0%,100%{transform:rotate(-7deg) translateY(0)}50%{transform:rotate(7deg) translateY(5px)}}
+#diver .db{position:absolute;left:28px;top:-6px;width:6px;height:6px;border-radius:50%;border:1px solid rgba(220,240,255,.6);animation:dbub 2.6s ease-in infinite}
+#diver .db:nth-child(2){left:36px;animation-delay:.9s;width:4px;height:4px}
+#diver .db:nth-child(3){left:24px;animation-delay:1.7s;width:5px;height:5px}
+@keyframes dbub{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-60px) translateX(6px);opacity:0}}
+#surface{position:absolute;left:0;right:0;top:56px;height:10px;opacity:.55;transition:opacity 1s}
+</style>
+</head>
+<body>
+<div id="dark"></div><div id="rays"></div>
+<div class="bubbles" id="bubbles"></div>
+
+<!-- Sinking hooligan -->
+<div id="sinkTrack" class="hide" aria-hidden="true">
+  <svg id="surface" viewBox="0 0 80 10" preserveAspectRatio="none"><path d="M0 5 Q10 0 20 5 T40 5 T60 5 T80 5" fill="none" stroke="#bfe9ff" stroke-width="1.5"/></svg>
+  <div class="rule"></div>
+  <div id="ticks"></div>
+  <div id="diver">
+    <span class="db"></span><span class="db"></span><span class="db"></span>
+    <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="4" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/>
+        </filter>
+        <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><line x1="0" y1="0" x2="0" y2="5" stroke="#1a2530" stroke-width="0.8" opacity=".35"/></pattern>
+      </defs>
+      <g filter="url(#rough)" stroke="#16222c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+        <!-- legs: grey sweatpants -->
+        <path d="M37 118 L33 176 L47 177 L50 128 Z" fill="#9aa3ab"/>
+        <path d="M50 128 L53 177 L67 176 L63 118 Z" fill="#9aa3ab"/>
+        <path d="M37 118 L33 176 L47 177 L50 128 Z" fill="url(#hatch)" stroke="none"/>
+        <path d="M33 168 Q40 171 47 168 M53 168 Q60 171 67 168" fill="none" stroke-width="1.4"/>
+        <!-- trainers -->
+        <path d="M30 176 L48 176 L49 184 L26 184 Q26 179 30 176 Z" fill="#f4f4f4"/>
+        <path d="M52 176 L70 176 Q74 179 74 184 L51 184 Z" fill="#f4f4f4"/>
+        <!-- hoodie body -->
+        <path d="M29 62 Q50 53 71 62 L75 121 Q50 128 25 121 Z" fill="#bfc6cc"/>
+        <path d="M60 66 L71 62 L75 121 Q66 124 58 125 Z" fill="url(#hatch)" stroke="none"/>
+        <path d="M27 116 Q50 122 73 116" fill="none" stroke-width="1.4"/>
+        <!-- arms, hands in the front pocket -->
+        <path d="M30 63 Q19 80 23 103 L35 103 Q31 85 37 70 Z" fill="#b6bdc3"/>
+        <path d="M70 63 Q81 80 77 103 L65 103 Q69 85 63 70 Z" fill="#b6bdc3"/>
+        <path d="M70 63 Q81 80 77 103 L65 103 Q69 85 63 70 Z" fill="url(#hatch)" stroke="none"/>
+        <!-- kangaroo pocket -->
+        <path d="M35 96 L65 96 L69 114 L31 114 Z" fill="#b1b8be"/>
+        <!-- hood + drawstrings -->
+        <path d="M34 60 Q50 70 66 60" fill="none"/>
+        <path d="M45 64 L44 80 M55 64 L56 80" fill="none" stroke-width="1.4"/>
+        <circle cx="44" cy="81" r="1.3" fill="#16222c"/><circle cx="56" cy="81" r="1.3" fill="#16222c"/>
+        <!-- Lechia balaclava: green and white -->
+        <path d="M35 40 Q35 19 50 19 Q65 19 65 40 Q65 56 50 59 Q35 56 35 40 Z" fill="#0e7a3c"/>
+        <path d="M35.5 33 Q50 29 64.5 33 L64.8 43 Q50 40 35.2 43 Z" fill="#f6f6f2"/>
+        <path d="M37 47 Q50 44 63 47 L62 51 Q50 48 38 51 Z" fill="#f6f6f2" stroke-width="1.4"/>
+        <!-- eye hole -->
+        <path d="M40 34.5 Q50 32 60 34.5 Q60 40 50 40.5 Q40 40 40 34.5 Z" fill="#e2b994"/>
+        <circle cx="45.5" cy="36.6" r="1.4" fill="#16222c" stroke="none"/>
+        <circle cx="54.5" cy="36.6" r="1.4" fill="#16222c" stroke="none"/>
+        <path d="M43 34 L48 34.8 M52 34.8 L57 34" fill="none" stroke-width="1.2"/>
+        <!-- pom-less top seam -->
+        <path d="M42 22 Q50 25 58 22" fill="none" stroke-width="1.2"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- HOME -->
+<section id="home" class="stack">
+  <div class="kicker">GDNMUN 2026 · Gdańsk · 20–22 Nov</div>
+  <h1>GDN<em>krillion</em></h1>
+  <p class="muted">Rare-answer trivia about Gdańsk Model United Nations 2026. The obvious answers barely count. The niche ones take you deep.</p>
+  <div class="card">
+    <div class="lvl"><b>Level 1</b><span class="muted" style="font-size:13px">Open to everyone</span></div>
+    <h2>The Daily Dive</h2>
+    <p class="muted" style="font-size:14px;margin:6px 0 12px">7 prompts, 25 seconds each, same for everyone today. Sign in with your name and surname.</p>
+    <button class="btn primary" id="bL1"><span>Start diving<small id="l1Sub">Rarer answers sink you deeper</small></span><span>→</span></button>
+  </div>
+  <div class="card">
+    <div class="lvl"><b class="l2">Level 2</b><span class="muted" style="font-size:13px">🔒 Code required</span></div>
+    <h2>GDNMUN Final</h2>
+    <p class="muted" style="font-size:14px;margin:6px 0 12px">Party mode for up to 10 players, one per committee. Pass the phone or tablet around, 15 seconds per turn, 2 hearts each. Last delegate floating wins.</p>
+    <button class="btn gold" id="bL2"><span>Enter the code<small>Ask the Sec, they have it</small></span><span>🔑</span></button>
+  </div>
+  <div class="card">
+    <div class="kicker" style="margin-bottom:10px">Rarity tiers</div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <footer>Unofficial fan game, inspired by <a href="https://krillion.io/">Krillion</a>. Not affiliated with GDNMUN or Krillion. Conference facts come from the GDNMUN 2026 MyMUN page. I set the rarity tiers myself. · <button id="bDev">Developer</button></footer>
+</section>
+
+<!-- NICKNAME -->
+<section id="nick" class="hide stack">
+  <div class="lvl"><b>Level 1</b></div>
+  <h2>Who's diving?</h2>
+  <p class="muted" style="font-size:14px">Your name and surname go on the leaderboard.</p>
+  <form id="nickForm" autocomplete="off" class="stack">
+    <input type="text" id="nickIn" enterkeyhint="go" placeholder="Name Surname" maxlength="40" autocapitalize="words" spellcheck="false">
+    <div class="err" id="nickErr"></div>
+    <button class="btn primary" type="submit"><span>Dive in</span><span>→</span></button>
+  </form>
+  <button class="btn ghost" data-home><span>Back</span><span>↑</span></button>
+</section>
+
+<!-- LEVEL 1 GAME -->
+<section id="game" class="hide">
+  <div class="hud">
+    <div class="depth"><small id="hudNick">Depth</small><span id="depthNum">0</span> m</div>
+    <div class="pips" id="pips"></div>
+  </div>
+  <div class="card">
+    <span class="chip" id="tag"></span>
+    <div class="prompt" id="q"></div>
+    <p class="muted" id="ctx" style="font-size:14px"></p>
+    <div id="askBox">
+      <div class="timer" id="timer"><div id="bar"></div></div>
+      <form class="ans" id="form" autocomplete="off">
+        <input type="text" id="inp" enterkeyhint="go" placeholder="Your answer…" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <button class="go" type="submit">Dive</button>
+      </form>
+      <div class="nope" id="nope"></div>
+      <button class="skip" id="giveUp" type="button">Give up on this one</button>
+    </div>
+    <div id="resBox" class="hide" style="margin-top:14px"></div>
+  </div>
+  <div style="margin-top:14px"><button class="btn primary hide" id="next"><span id="nextLbl">Next prompt</span><span>→</span></button></div>
+</section>
+
+<!-- LEVEL 1 END -->
+<section id="end" class="hide stack">
+  <div class="kicker" id="endKicker">Dive complete</div>
+  <div class="card" style="text-align:center">
+    <div class="muted" id="endWho" style="font-size:13px;letter-spacing:.12em;text-transform:uppercase">You reached</div>
+    <div class="big"><span id="endDepth">0</span> m</div>
+    <div class="muted" id="endPts"></div>
+    <div class="emorow" id="endEmo"></div>
+    <div class="muted" id="endRank" style="font-size:15px"></div>
+  </div>
+  <button class="btn primary" id="share"><span>Copy result</span><span>⧉</span></button>
+  <div class="card"><table class="recap" id="recap"></table></div>
+  <button class="btn ghost" data-home><span>Back to the surface</span><span>↑</span></button>
+</section>
+
+<!-- LEVEL 2 LOCK -->
+<section id="lock" class="hide stack">
+  <div class="lvl"><b class="l2">Level 2</b></div>
+  <h2>GDNMUN Final 🔒</h2>
+  <p class="muted" style="font-size:14px">Only people with the code get in.</p>
+  <form id="lockForm" autocomplete="off" class="stack">
+    <input type="password" id="lockIn" placeholder="Access code" spellcheck="false" autocapitalize="off">
+    <div class="err" id="lockErr"></div>
+    <button class="btn gold" type="submit"><span>Unlock</span><span>🔑</span></button>
+  </form>
+  <button class="btn ghost" data-home><span>Back</span><span>↑</span></button>
+</section>
+
+<!-- LEVEL 2 SETUP -->
+<section id="setup" class="hide stack">
+  <div class="lvl"><b class="l2">Level 2</b><span class="muted" style="font-size:13px">GDNMUN Final</span></div>
+  <h2>Take your seats</h2>
+  <p class="muted" style="font-size:14px">There are 10 seats, one for each GDNMUN committee. Fill at least 2. Turns go in seat order: answer the prompt with something nobody has said yet, within 15 seconds, then pass the device on. Miss and you lose a heart ❤️, and a new prompt starts. Lose both and you're out.</p>
+  <div class="seats" id="seats"></div>
+  <div class="err" id="setupErr"></div>
+  <button class="btn gold" id="startParty"><span>Start the final<small id="seatCount">0 / 10 seats filled</small></span><span>→</span></button>
+  <button class="btn ghost" data-home><span>Back</span><span>↑</span></button>
+</section>
+
+<!-- LEVEL 2 PARTY -->
+<section id="party" class="hide">
+  <div class="players" id="players"></div>
+  <div class="card">
+    <span class="chip" id="pTag"></span>
+    <div class="prompt" id="pQ"></div>
+    <p class="muted" id="pCtx" style="font-size:14px"></p>
+    <div id="pAsk">
+      <div class="turn" id="pTurn"></div>
+      <div class="timer" id="pTimer"><div id="pBar"></div></div>
+      <form class="ans" id="pForm" autocomplete="off">
+        <input type="text" id="pInp" enterkeyhint="go" placeholder="Your answer…" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <button class="go" type="submit">Go</button>
+      </form>
+      <div class="nope" id="pNope"></div>
+      <div class="flash" id="pFlash"></div>
+      <button class="skip" id="pPass" type="button">I've got nothing (lose a heart)</button>
+    </div>
+    <div id="pRes" class="hide" style="margin-top:12px"></div>
+    <div class="used" id="pUsed"></div>
+  </div>
+  <div style="margin-top:14px"><button class="btn gold hide" id="pNext"><span>Next prompt</span><span>→</span></button></div>
+</section>
+
+<!-- LEVEL 2 END -->
+<section id="pend" class="hide stack">
+  <div class="kicker">GDNMUN Final · results</div>
+  <div class="card" style="text-align:center">
+    <div style="font-size:48px">🏆</div>
+    <div class="muted" style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-top:6px">Last delegate floating</div>
+    <div class="big" id="winName" style="font-size:40px;margin-top:6px"></div>
+    <div class="muted" id="winSeat"></div>
+  </div>
+  <div class="card"><table class="recap" id="standings"></table></div>
+  <button class="btn gold" id="rematch"><span>Rematch, same seats</span><span>↻</span></button>
+  <button class="btn" id="reseat"><span>Change players</span><span>✎</span></button>
+  <button class="btn ghost" data-home><span>Back to the surface</span><span>↑</span></button>
+</section>
+
+<!-- DEVELOPER -->
+<section id="dev" class="hide stack">
+  <div class="kicker">Developer mode</div>
+  <h2>Control room</h2>
+  <div class="card">
+    <div class="muted" style="font-size:13px">Level 2 access code, to share with players:</div>
+    <div class="code" id="devCode"></div>
+    <button class="btn" id="copyCode"><span>Copy code</span><span>⧉</span></button>
+  </div>
+  <div class="card">
+    <div class="row" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div class="kicker">Leaderboard · Level 1</div>
+      <button class="chip" id="refreshLb" style="background:none">Refresh</button>
+    </div>
+    <p class="muted" id="lbNote" style="font-size:12px;margin-bottom:6px"></p>
+    <table class="recap" id="lb"></table>
+  </div>
+  <button class="btn" id="openGuide"><span>Answer key (every accepted answer)<small>All prompts, both levels</small></span><span>📖</span></button>
+  <button class="btn ghost" id="devOut"><span>Leave developer mode</span><span>🔒</span></button>
+</section>
+
+<!-- GUIDE -->
+<section id="guide" class="hide">
+  <div class="kicker">Developer · answer key</div>
+  <h2 style="margin:6px 0 4px">Field Guide</h2>
+  <p class="muted" style="font-size:14px" id="guideCount"></p>
+  <div id="guideBody"></div>
+  <div style="margin-top:20px"><button class="btn ghost" id="guideBack"><span>Back to control room</span><span>↑</span></button></div>
+</section>
+
+</div>
+
+<!-- dev unlock modal -->
+<div class="modal hide" id="devModal">
+  <form class="card stack" id="devForm" autocomplete="off">
+    <div class="kicker">Developer</div>
+    <input type="password" id="devIn" placeholder="Developer code" spellcheck="false" autocapitalize="off">
+    <div class="err" id="devErr"></div>
+    <button class="btn primary" type="submit"><span>Unlock</span><span>→</span></button>
+    <button class="btn ghost" type="button" id="devCancel"><span>Cancel</span><span>✕</span></button>
+  </form>
+</div>
+<div class="toast hide" id="toast"></div>
+
+<script>
+// name=aliases ; continents (e europe, a asia, f africa, m americas, o oceania) ; flags (U UN member, N NPT party, A Arab League, E EU, T NATO, L landlocked) ; fame 1-9
+const COUNTRY_RAW=`
+Afghanistan;a;UNL;7
+Albania;e;UNT;5
+Algeria;f;UNA;6
+Andorra;e;UNL;4
+Angola;f;UN;5
+Antigua and Barbuda=antigua;m;UN;2
+Argentina;m;UN;8
+Armenia;ea;UNL;5
+Australia;o;UN;9
+Austria;e;UNEL;7
+Azerbaijan;ea;UNL;5
+Bahamas=the bahamas;m;UN;4
+Bahrain;a;UNA;4
+Bangladesh;a;UN;6
+Barbados;m;UN;3
+Belarus;e;UNL;6
+Belgium;e;UNET;7
+Belize;m;UN;3
+Benin;f;UN;3
+Bhutan;a;UNL;4
+Bolivia;m;UNL;5
+Bosnia and Herzegovina=bosnia,bih,bosnia herzegovina;e;UN;5
+Botswana;f;UNL;4
+Brazil;m;UN;9
+Brunei=brunei darussalam;a;UN;3
+Bulgaria;e;UNET;5
+Burkina Faso;f;UNL;3
+Burundi;f;UNL;3
+Cabo Verde=cape verde;f;UN;3
+Cambodia;a;UN;5
+Cameroon;f;UN;4
+Canada;m;UNT;9
+Central African Republic=car;f;UNL;3
+Chad;f;UNL;3
+Chile;m;UN;7
+China=prc,peoples republic of china;a;UN;9
+Colombia;m;UN;7
+Comoros;f;UNA;2
+Costa Rica;m;UN;5
+Côte d'Ivoire=ivory coast,cote divoire,cote d ivoire;f;UN;4
+Croatia;e;UNET;6
+Cuba;m;UN;7
+Cyprus;ea;UNE;5
+Czechia=czech republic,czech;e;UNETL;7
+DR Congo=democratic republic of the congo,drc,dr congo,congo kinshasa,congo,democratic republic of congo,zaire;f;UN;5
+Denmark;e;UNET;7
+Djibouti;f;UNA;2
+Dominica;m;UN;2
+Dominican Republic;m;UN;4
+Ecuador;m;UN;5
+Egypt;f;UNA;8
+El Salvador=salvador;m;UN;4
+Equatorial Guinea;f;UN;2
+Eritrea;f;UN;3
+Estonia;e;UNET;5
+Eswatini=swaziland;f;UNL;2
+Ethiopia;f;UNL;6
+Fiji;o;UN;4
+Finland;e;UNET;7
+France;e;UNET;9
+Gabon;f;UN;3
+Gambia=the gambia;f;UN;3
+Georgia;ea;UN;5
+Germany;e;UNET;9
+Ghana;f;UN;5
+Greece;e;UNET;8
+Grenada;m;UN;2
+Guatemala;m;UN;4
+Guinea;f;UN;3
+Guinea-Bissau=guinea bissau;f;UN;2
+Guyana;m;UN;3
+Haiti;m;UN;5
+Honduras;m;UN;4
+Hungary;e;UNETL;6
+Iceland;e;UNT;6
+India;a;U;9
+Indonesia;a;UN;7
+Iran;a;UN;8
+Iraq;a;UNA;8
+Ireland;e;UNE;7
+Israel;a;U;8
+Italy;e;UNET;9
+Jamaica;m;UN;6
+Japan;a;UN;9
+Jordan;a;UNA;6
+Kazakhstan;ea;UNL;5
+Kenya;f;UN;6
+Kiribati;o;UN;2
+Kuwait;a;UNA;5
+Kyrgyzstan;a;UNL;3
+Laos;a;UNL;4
+Latvia;e;UNET;5
+Lebanon;a;UNA;6
+Lesotho;f;UNL;2
+Liberia;f;UN;3
+Libya;f;UNA;6
+Liechtenstein;e;UNL;4
+Lithuania;e;UNET;5
+Luxembourg;e;UNETL;5
+Madagascar;f;UN;5
+Malawi;f;UNL;3
+Malaysia;a;UN;6
+Maldives;a;UN;4
+Mali;f;UNL;4
+Malta;e;UNE;5
+Marshall Islands;o;UN;2
+Mauritania;f;UNA;3
+Mauritius;f;UN;3
+Mexico;m;UN;9
+Micronesia=federated states of micronesia;o;UN;2
+Moldova;e;UNL;4
+Monaco;e;UN;5
+Mongolia;a;UNL;5
+Montenegro;e;UNT;4
+Morocco;f;UNA;6
+Mozambique;f;UN;4
+Myanmar=burma;a;UN;5
+Namibia;f;UN;4
+Nauru;o;UN;2
+Nepal;a;UNL;5
+Netherlands=holland;e;UNET;8
+New Zealand;o;UN;7
+Nicaragua;m;UN;4
+Niger;f;UNL;3
+Nigeria;f;UN;7
+North Korea=dprk,democratic peoples republic of korea;a;U;7
+North Macedonia=macedonia;e;UNTL;4
+Norway;e;UNT;7
+Oman;a;UNA;4
+Pakistan;a;U;7
+Palau;o;UN;2
+Panama;m;UN;5
+Papua New Guinea=png;o;UN;3
+Paraguay;m;UNL;4
+Peru;m;UN;6
+Philippines;a;UN;6
+Poland=polska;e;UNET;9
+Portugal;e;UNET;8
+Qatar;a;UNA;6
+Republic of the Congo=congo brazzaville,congo republic,republic of congo;f;UN;3
+Romania;e;UNET;6
+Russia=russian federation;ea;UN;9
+Rwanda;f;UNL;4
+Saint Kitts and Nevis=st kitts and nevis,st kitts;m;UN;1
+Saint Lucia=st lucia;m;UN;2
+Saint Vincent and the Grenadines=st vincent and the grenadines,st vincent,saint vincent;m;UN;1
+Samoa;o;UN;3
+San Marino;e;UNL;4
+São Tomé and Príncipe=sao tome,sao tome and principe;f;UN;1
+Saudi Arabia;a;UNA;8
+Senegal;f;UN;4
+Serbia;e;UNL;6
+Seychelles;f;UN;3
+Sierra Leone;f;UN;3
+Singapore;a;UN;6
+Slovakia;e;UNETL;5
+Slovenia;e;UNET;5
+Solomon Islands;o;UN;2
+Somalia;f;UNA;5
+South Africa;f;UN;7
+South Korea=korea,republic of korea,rok;a;UN;8
+South Sudan;f;UL;3
+Spain;e;UNET;9
+Sri Lanka;a;UN;5
+Sudan;f;UNA;5
+Suriname;m;UN;2
+Sweden;e;UNET;7
+Switzerland;e;UNL;7
+Syria;a;UNA;7
+Tajikistan;a;UNL;3
+Tanzania;f;UN;4
+Thailand;a;UN;7
+Timor-Leste=east timor,timor leste;a;UN;2
+Togo;f;UN;2
+Tonga;o;UN;2
+Trinidad and Tobago=trinidad;m;UN;3
+Tunisia;f;UNA;5
+Turkey=turkiye;ea;UNT;8
+Turkmenistan;a;UNL;3
+Tuvalu;o;UN;1
+Uganda;f;UNL;4
+Ukraine;e;UN;8
+United Arab Emirates=uae,emirates;a;UNA;7
+United Kingdom=uk,britain,great britain,england;e;UNT;9
+United States=usa,us,united states of america,america;m;UNT;9
+Uruguay;m;UN;5
+Uzbekistan;a;UNL;4
+Vanuatu;o;UN;2
+Venezuela;m;UN;6
+Vietnam=viet nam;a;UN;7
+Yemen;a;UNA;5
+Zambia;f;UNL;3
+Zimbabwe;f;UNL;4
+Palestine=state of palestine;a;NA;7
+Vatican City=holy see,vatican;e;NL;6
+Kosovo;e;L;4
+Taiwan=republic of china,roc;a;;6`;
+const COUNTRIES=COUNTRY_RAW.trim().split('\n').map(l=>{const [n,c,f,fame]=l.split(';');const [name,al]=n.split('=');return {name,alias:al||'',cont:c,flags:f,fame:+fame};});
+
+// Prompt formats:
+//  a: [[answer, tier, aliases(pipe), note], ...]          (closed lists)
+//  t: {p:"Name=alias,alias~note|...", s:"...", ...}       (open lists; tiers p c s r d k)
+//  gen: function filter over COUNTRIES (tiers assigned by fame within the set)
+// l2: true  -> also in the Level 2 party deck
+const P=[
+{id:'sec',tag:'Secretariat',q:'Name a member of the GDNMUN 2026 Secretariat',ctx:'13 people run the conference. Everyone knows the Sec-Gen…',person:1,a:[
+['Julia D\'Arcy','p','darcy|d arcy|secretary general|sec gen|sg|secgen','Secretary General'],
+['Maja Dominiak','c','director general|dg','Director General'],
+['Edyta Probucka','s','deputy secretary general|dsg|deputy sec gen','Deputy Secretary General'],
+['Antoni Banaszak','s','president of the general assembly|pga','President of the General Assembly'],
+['Witold Cieśliński','s','','President of the General Assembly'],
+['Maja Gawrysiak','r','head of media','Head of Media'],
+['Lena Gościniak','r','head of finance','Head of Finance'],
+['Piotr Kudan','r','head of external affairs','Head of External Affairs'],
+['Piotr Buczkowski','r','head of logistics','Head of Logistics'],
+['Jakub Gotalski','d','head of it','Head of IT'],
+['Urszula Flisikowska','d','head of design','Head of Design'],
+['Matylda Krawczykowska','d','head of pages','Head of Pages'],
+['Marta Zmitrowicz','k','head of supplies','Head of Supplies']]},
+
+{id:'com',tag:'Committees',q:'Name a committee at GDNMUN 2026',ctx:'There are ten. Some are far less famous than others.',a:[
+['UN Security Council','p','unsc|security council|sc','Expert · The situation in Syria'],
+['Human Rights Council','p','hrc|unhrc','Beginner · Misuse of power by prison authorities'],
+['World Health Organization','p','who|world health organisation','Beginner · Disparities in dementia care'],
+['ECOSOC','s','economic and social council','Beginner · Preventing ghost towns'],
+['DISEC','s','disarmament and international security committee|ga1|first committee','Intermediate · Nuclear latency'],
+['International Criminal Court','r','icc','Expert · Prosecutor v. Bemba'],
+['UNODC','r','un office on drugs and crime|united nations office on drugs and crime|office on drugs and crime','Beginner · Deepfakes & organised crime'],
+['UN Women','r','unw|united nations entity for gender equality and the empowerment of women|un entity for gender equality','Beginner · Harmful online beauty standards'],
+['Alternative Historical Committee','d','ahc|historical committee|alternative history committee|alt history','Expert · Germany won WWI'],
+['GDNMUN TV','k','tv|gdnmun television|press|press corps|press team','Intermediate · A live TV crew covering the conference']]},
+
+{id:'chair',tag:'Chairs',q:'Name any GDNMUN 2026 chair',ctx:'22 chairs across 10 committees.',person:1,l2:1,a:[
+['Ivory Skrzyniarz','p','','UNSC'],
+['Daniel Cal','s','','UNSC'],
+['Feliks Liberak','s','','DISEC'],
+['Marysia Gryglewska','s','maria gryglewska','DISEC'],
+['Gabriela Kowalczyk','s','','ICC'],
+['Sara Wysocka','s','','ICC'],
+['Andrzej Bansleben','c','','GDNMUN TV. He chaired TV in 2025 too, so he\'s less niche than he looks'],
+['Aleksander Cichoński','r','','AHC'],
+['Axel Myszko','r','','AHC'],
+['Blanka Sikora','r','','ECOSOC'],
+['Aleksander Sowa','r','','ECOSOC'],
+['Lena Kamińska','r','','HRC'],
+['Kornel Pietrewicz','r','','HRC'],
+['Oliwia Trześniewska','r','','WHO'],
+['Zuzanna Karolak','r','','WHO'],
+['Barbara Burchardt','r','','UN Women'],
+['Antonina Podgórska','d','','UNODC'],
+['Błażej Kotwicki','d','','UNODC'],
+['Julia Wasiluk','d','','GDNMUN TV'],
+['Marianna Mikołajczak','d','','GDNMUN TV'],
+['Helena Harciarek','k','','UNODC, the third chair of a three-chair committee'],
+['Franciszek Jerzy Wincenty Basiński','k','franciszek basinski|basinski','UN Women. Bonus respect if you typed all four names']]},
+
+{id:'mot',tag:'Procedure',q:'Name a motion, point or procedural move in MUN',ctx:'This is every one we could find across MUN rules of procedure. Everyone says "mod". Go deeper.',l2:1,a:[
+['Moderated caucus','p','mod|mod caucus|moderated'],
+['Unmoderated caucus','p','unmod|unmod caucus|unmoderated'],
+['Point of information','p','poi|point of information to the speaker'],
+['Point of personal privilege','s','ppp|personal privilege'],
+['Point of order','s','poo'],
+['Open the speakers list','s','speakers list|open speakers list|set the speakers list|general speakers list|gsl|open the gsl|open debate'],
+['Close debate','s','closure of debate|close the debate|closure|move into voting procedure|voting procedure|move to voting|enter voting procedure|move into voting|move directly into voting procedure'],
+['Introduce a draft resolution','s','introduce draft resolution|introduce a resolution|introduce the resolution'],
+['Introduce a working paper','s','introduce working paper|working paper'],
+['Point of parliamentary inquiry','c','parliamentary inquiry|point of inquiry|ppi|point of parliamentary procedure'],
+['Suspend the meeting','c','suspend the session|suspension of the meeting|suspend debate|suspend|suspension|recess'],
+['Adjourn the meeting','c','adjourn the session|adjournment of the meeting|adjourn|adjournment'],
+['Roll call vote','r','roll call|roll call voting|vote by roll call'],
+['Right of reply','r','reply'],
+['Introduce an amendment','r','amendment|amend|amendments|unfriendly amendment|friendly amendment'],
+['Extend the caucus','r','extension|extend|extend debate time|extension of the caucus|extend the mod|extend the unmod|extend debate'],
+['Set the agenda','r','adopt the agenda|set agenda|agenda|establish the agenda'],
+['Table the topic','r','adjourn debate|adjournment of debate|postpone debate|table|table the debate|postpone'],
+['Request a follow-up','r','follow up|point of follow up|follow up question'],
+['Change speaking time','r','set speaking time|set the speaking time|limit speaking time|change the speaking time|speaking time'],
+['Yield to the chair','r','yield to chair'],
+['Yield to another delegate','r','yield to a delegate|yield to delegate'],
+['Yield to points of information','r','yield to questions|yield to pois|yield to poi'],
+['Open the floor to points of information','r','open the floor|open the floor to pois|entertain points of information|extend points of information'],
+['Explanation of vote','r','explanation of votes|eov'],
+['Resume debate','r','resumption of debate|reopen debate'],
+['Close the speakers list','r','close speakers list'],
+['Reopen the speakers list','r','reopen speakers list'],
+['Withdraw a draft resolution','r','withdraw|withdraw the resolution|withdraw a motion'],
+['Point of clarification','r','clarification'],
+['Introduce a directive','r','directive','Crisis committees'],
+['Division of the question','d','divide the question|division|vote clause by clause|clause by clause|split the question'],
+['Reorder draft resolutions','d','reordering draft resolutions|reorder resolutions|reorder'],
+['Appeal the decision of the chair','d','appeal the chair|appeal|appeal of the chair|challenge the chair|appeal the chairs decision'],
+['Round robin','d','round robin caucus'],
+['Straw poll','d','straw vote'],
+['Reconsider','d','reconsideration|reconsider a vote'],
+['Tour de table','d','tour de table caucus'],
+['Vote with rights','d','yes with rights|no with rights|with rights'],
+['Adopt by consensus','d','consensus|adoption by consensus|acclamation|vote by acclamation'],
+['Previous question','d','move the previous question|the previous question'],
+['Point of information to the chair','d','question to the chair'],
+['Introduce a press release','d','press release|communique','Crisis committees'],
+['Consultation of the whole','k','consultation|consult of the whole'],
+['Minute of silent prayer or meditation','k','silent prayer|minute of silence|moment of silence|silent meditation|moment of silent prayer|moment of meditation|minute of silent prayer','Real UN General Assembly procedure (rule 62)'],
+['No-action motion','k','no action|motion of no action|no action motion','A real UN tactic to block a vote on a draft'],
+['Important question','k','declare an important question','A real UN GA move that raises the vote needed to two-thirds'],
+['Question of competence','k','competence|challenge competence','UN GA rule 79: does the body even have the power to decide?']]},
+
+{id:'gdn25',tag:'GDNMUN history',q:'Name someone who chaired or ran GDNMUN 2025',ctx:'Last year: 12 committees and a 13-person Secretariat. A few of them are back this year.',person:1,a:[
+['Hanna Lis','p','secretary general 2025','Secretary General 2025 (not the TV journalist)'],
+['Marta Zmitrowicz','c','','Head of Supplies, both in 2025 and 2026'],
+['Lena Kamińska','c','','Chaired HRC in 2025 and chairs it again in 2026'],
+['Andrzej Bansleben','c','','Chaired GDNMUN TV in 2025 and 2026'],
+['Zofia Bielawa','s','','Deputy Secretary General 2025'],
+['Marika Chaber','s','','Director General 2025'],
+['Tymon Snarski','s','','President of the General Assembly & Head of Academics 2025'],
+['Wiktoria Piask','r','','Head of Media 2025'],
+['Jakub Sztąborowski','r','','Head of Finance 2025'],
+['Mateusz Górski','r','','Head of External Affairs 2025'],
+['Iga Parkitna','r','','Head of Logistics 2025'],
+['Patrycja Lipiak','r','','Head of Design & Marketing 2025'],
+['Antek Cieśliński','r','antoni cieslinski','Head of IT 2025'],
+['Tobiasz Olkowski','r','','Head of Pages 2025'],
+['Barbara Bątkowska','r','','UNSC chair 2025 (Middle East & Gaza)'],
+['Lena Kalisiewicz','r','','UNSC chair 2025'],
+['Natalia Monkiewicz','r','','ICC chair 2025 (Prosecutor v. Mahamat Said Abdel Kani)'],
+['Maja Brodzicka','r','','ICC chair 2025'],
+['Piotr Gołębiowski','d','','Future Security Council chair 2025 (a Polish civil war scenario)'],
+['Marta Woźniak','d','','Future Security Council chair 2025'],
+['Cezary Dolny','d','','DISEC chair 2025 (radioactive waste in conflict zones)'],
+['Janina Milejczak','d','','DISEC chair 2025'],
+['Nicolas Klupczynski','d','nicolas klupczyński','ECOSOC chair 2025 (automation and jobs)'],
+['Mateusz Banasik','d','','ECOSOC chair 2025'],
+['Dawid Strukowski','d','','WHO chair 2025 (antibiotic overuse)'],
+['Maciej Nowak','d','','WHO chair 2025'],
+['Nina Mistygacz','d','','HRC chair 2025 (juvenile justice)'],
+['Szymon Marcin Głuchowski','d','szymon gluchowski','UNODC chair 2025 (cyber-enabled organised crime)'],
+['Sonia Klaus','d','','UNODC chair 2025'],
+['Michał Hochuł-Kubica','d','michal hochul kubica|hochul kubica|hochul','UN Women chair 2025 (surrogacy)'],
+['Helena Borodziuk','d','','UN Women chair 2025'],
+['Jakub Sienkiewicz','d','','IOC chair 2025 (athletes from unrecognised regions)'],
+['Piotr Kawula','d','','IOC chair 2025'],
+['Szymon Paśko','d','','1950 Pan-African Congress chair 2025'],
+['Jacek Pisarski','d','','1950 Pan-African Congress chair 2025'],
+['Michał Wojtkiewicz','d','','GDNMUN TV chair 2025'],
+['Huy Hoang Nguyen','k','nguyen|huy nguyen','Third ECOSOC chair 2025'],
+['Karol Ziołkowski','k','','Third HRC chair 2025'],
+['Marcin Dereń','k','','Third IOC chair 2025'],
+['Jakub Kłopocki','k','head of first timers preparations','Head of First Timers\' Preparations 2025, a role that only existed last year']]},
+
+// ---------------- Countries (every correct answer) ----------------
+{id:'syr',tag:'UNSC · Syria',q:'Name a country that borders Syria',ctx:'The Security Council is debating "The situation in Syria".',a:[
+['Turkey','p','turkiye'],['Lebanon','p',''],['Iraq','s',''],['Jordan','s',''],['Israel','d','golan|golan heights','Via the Israeli-occupied Golan Heights']]},
+
+{id:'polb',tag:'Gdańsk · Poland',q:'Name a country that borders Poland',ctx:'GDNMUN\'s home country has 7 neighbours.',a:[
+['Germany','p',''],['Czechia','s','czech republic|czech'],['Ukraine','s',''],['Slovakia','r',''],['Belarus','r',''],['Lithuania','d',''],['Russia','k','russian federation|kaliningrad','Only via Kaliningrad, just up the coast from Gdańsk']]},
+
+{id:'unsc26',tag:'UNSC',q:'Name a member of the real UN Security Council in 2026',ctx:'5 permanent, 10 elected. GDNMUN\'s council has 17 seats; the real one has 15.',a:[
+['United States','p','usa|us|united states of america|america'],['China','p','prc'],['Russia','p','russian federation'],['United Kingdom','p','uk|britain|great britain'],['France','p',''],
+['Pakistan','s','','Elected for 2025–26'],['Denmark','r','','Elected for 2025–26'],['Greece','r','','Elected for 2025–26'],['Panama','r','','Elected for 2025–26'],['Somalia','r','','Elected for 2025–26'],
+['Colombia','r','','Elected for 2026–27'],['DR Congo','r','drc|democratic republic of the congo|dr congo|congo','Elected for 2026–27'],
+['Latvia','d','','2026–27, its first time ever on the Council'],['Liberia','d','','Elected for 2026–27'],['Bahrain','d','','Elected for 2026–27']]},
+
+{id:'ahc',tag:'AHC · WWI',q:'Name a state that fought on the Central Powers\' side in WWI',ctx:'In the Alternative Historical Committee, they won the Great War.',a:[
+['Germany','p','german empire|imperial germany'],
+['Austria-Hungary','s','austria|hungary|austro hungarian empire|austro hungary|austria hungary'],
+['Ottoman Empire','r','ottomans|ottoman|turkey'],
+['Bulgaria','d','kingdom of bulgaria'],
+['Dervish State','k','dervish|somali dervishes|dervishes','Somali state that fought alongside the Central Powers'],
+['Emirate of Jabal Shammar','k','jabal shammar|shammar|jebel shammar','Arabian emirate allied with the Ottomans']]},
+
+{id:'un',tag:'General Assembly',q:'Name a UN member state',ctx:'All 193 count. The tiny ones take you deepest.',l2:1,gen:c=>c.flags.includes('U'),foot:'Palestine, the Holy See, Kosovo and Taiwan aren\'t UN members, so they don\'t count here.'},
+{id:'npt',tag:'DISEC · Nuclear',q:'Name a state party to the Nuclear Non-Proliferation Treaty (NPT)',ctx:'DISEC is debating nuclear latency. India, Pakistan, Israel and South Sudan never joined, and North Korea announced it was leaving.',l2:1,gen:c=>c.flags.includes('N')},
+{id:'arab',tag:'UNSC · Syria',q:'Name a member of the Arab League',ctx:'22 members. Syria was readmitted in 2023.',l2:1,gen:c=>c.flags.includes('A')},
+{id:'africa',tag:'ICC · Africa',q:'Name a country in Africa',ctx:'The ICC\'s Bemba case played out in the Central African Republic. All 54 count.',l2:1,gen:c=>c.cont.includes('f')},
+{id:'europe',tag:'Europe',q:'Name a country in Europe',ctx:'Transcontinental countries and Kosovo count.',l2:1,gen:c=>c.cont.includes('e')},
+{id:'asia',tag:'Asia',q:'Name a country in Asia',ctx:'Transcontinental countries, Palestine and Taiwan count.',l2:1,gen:c=>c.cont.includes('a')},
+{id:'americas',tag:'Americas',q:'Name a country in North, Central or South America (or the Caribbean)',ctx:'All 35 sovereign states count.',l2:1,gen:c=>c.cont.includes('m')},
+{id:'oceania',tag:'Oceania',q:'Name a country in Oceania',ctx:'Only 14. Good luck past the first two.',gen:c=>c.cont.includes('o')},
+{id:'eu',tag:'Europe',q:'Name an EU member state',ctx:'27 members.',l2:1,gen:c=>c.flags.includes('E')},
+{id:'nato',tag:'DISEC',q:'Name a NATO member',ctx:'32 allies, Sweden being the newest.',l2:1,gen:c=>c.flags.includes('T')},
+{id:'landlocked',tag:'ECOSOC',q:'Name a landlocked country',ctx:'No coastline at all. Caspian countries count as landlocked.',l2:1,gen:c=>c.flags.includes('L')},
+
+// ---------------- Open prompts (100+) ----------------
+{id:'ghost',tag:'ECOSOC · Ghost towns',q:'Name a real ghost town or abandoned settlement',ctx:'ECOSOC is working on preventing ghost towns.',l2:1,t:{
+p:'Pripyat=prypiat',
+c:'Chernobyl=chornobyl',
+s:'Hashima Island=hashima,gunkanjima,battleship island~Japan|Centralia~Pennsylvania, USA|Varosha=varosia,maras~Cyprus|Kolmanskop=kolmannskuppe~Namibia|Bodie~California|Oradour-sur-Glane=oradour~France|Craco~Italy|Pyramiden~Svalbard|Kayaköy=kayakoy,levissi~Turkey|Calico~California|Plymouth=plymouth montserrat~Montserrat, buried by a volcano|Old Quneitra=quneitra~Syria',
+r:'Belchite~Spain|Agdam=aghdam~Azerbaijan|Fordlândia=fordlandia~Brazil|Humberstone~Chile|Rhyolite~Nevada|Doel~Belgium|Tyneham~England|Imber~England|Spinalonga~Crete|Bannack~Montana|Kennecott~Alaska|St Kilda=hirta~Scotland, evacuated 1930|Wittenoom~Australia|Epecuén=epecuen,villa epecuen~Argentina|Armero~Colombia|Ani~Turkey|Kuldhara~India|Dhanushkodi~India|Fatehpur Sikri~India|Bokor Hill Station=bokor~Cambodia|Picher~Oklahoma|Times Beach~Missouri|Houtouwan~China|Neftegorsk~Russia|Mologa~Russia, flooded by a reservoir|Capel Celyn~Wales, flooded|Fleury-devant-Douaumont=fleury~France, destroyed at Verdun',
+d:'Kadykchan~Russia|Garnet~Montana|St. Elmo=st elmo,saint elmo~Colorado|Animas Forks~Colorado|Cahawba=cahaba~Alabama|Grafton~Utah|Cisco~Utah|Glenrio~Texas/New Mexico|Thurber~Texas|Treece~Kansas|Ballarat~California|Cerro Gordo~California|Elkhorn~Montana|Ruby~Arizona|Two Guns~Arizona|Berlin=berlin nevada~Nevada|Terlingua~Texas|Anyox~Canada|Kitsault~Canada|Bankhead~Canada|Val-Jalbert=val jalbert~Canada|Pine Point~Canada|Ivittuut~Greenland|Santa Laura~Chile|Sewell~Chile|Chacabuco~Chile|Elizabeth Bay~Namibia|Pomona~Namibia|Gedi=gede~Kenya|Al Jazirat Al Hamra=jazirat al hamra~UAE|Lifta~Jerusalem|Cossack~Australia|Hallsands~England|Wharram Percy~England|Slievemore~Ireland|Grumant~Svalbard|Skrunda-1=skrunda~Latvia|Polesskoye=polesske~Ukraine|Kopachi~Ukraine|Vogelsang~Germany|Doupov~Czechia|Pentedattilo~Italy|Balestrino~Italy|Consonno~Italy|Poggioreale=poggioreale vecchia~Sicily|Gibellina=gibellina vecchia~Sicily|Roghudi~Italy|Curon=graun,old curon~Italy, a church tower in a lake|Fabbriche di Careggine=careggine~Italy, underwater|Granadilla~Spain|Ochate~Spain|Bezonvaux~France|Ornes~France|Goussainville~France|Iultin~Russia|Khalmer-Yu=khalmer yu~Russia|Kursha-2=kursha~Russia|Kantubek~Uzbekistan, on a former bioweapons island|Old AlUla=alula,al ula~Saudi Arabia',
+k:'Kłomino=klomino~A former Soviet garrison town in Poland|Pstrąże=pstraze~Abandoned Soviet base town in Lower Silesia'
+}},
+
+{id:'pris',tag:'HRC · Prisons',q:'Name a real prison, past or present',ctx:'HRC is tackling misuse of power by prison authorities.',l2:1,t:{
+p:'Alcatraz|Guantanamo Bay=guantanamo,gitmo',
+c:'Bastille|Tower of London',
+s:'Abu Ghraib|Robben Island|Rikers Island=rikers|Sing Sing|San Quentin|Folsom|Attica',
+r:'Sednaya=saydnaya~Syria, which ties into the UNSC topic|Evin~Iran|Lubyanka~Moscow|ADX Florence=adx,supermax~USA|Tuol Sleng=s 21,s21~Cambodia|Belmarsh~London|Leavenworth~USA|Angola=louisiana state penitentiary~USA|Eastern State Penitentiary=eastern state~USA|Pelican Bay~USA|Devil\'s Island=devils island~French Guiana|Kilmainham Gaol=kilmainham~Dublin|Long Kesh=maze,hm prison maze,the maze~Northern Ireland|Spandau~Berlin|Newgate~London|Dartmoor~England|Changi~Singapore|Tihar~India|Cellular Jail=kala pani~Andaman Islands|CECOT~El Salvador|Black Dolphin~Russia|Polar Owl=ik 3,kharp~Russia, where Navalny died|Pawiak~Warsaw|Hỏa Lò=hoa lo,hanoi hilton~Vietnam|Château d\'If=chateau d if~Marseille|Port Arthur~Tasmania|Wormwood Scrubs~London|Pentonville~London|Strangeways=hmp manchester~England|Stammheim~Germany|Colditz~Germany (POW castle)|La Santé=la sante~Paris|Mountjoy~Dublin|Kresty~St Petersburg',
+d:'Lefortovo~Moscow|Butyrka~Moscow|Matrosskaya Tishina~Moscow|Vladimir Central~Russia|White Swan=solikamsk~Russia|Tadmor=palmyra prison~Syria|Mazzeh~Syria|Bang Kwang~Thailand|Kerobokan~Bali|Nusakambangan~Indonesia|Insein~Myanmar|Yerwada~India|Abashiri~Japan|Sugamo~Japan|Qincheng~China|Camp 14=kaechon~North Korea|Yodok=camp 15~North Korea|Carandiru~Brazil|Lecumberri~Mexico|Puente Grande~Mexico|Altiplano~Mexico|Tocorón=tocoron~Venezuela|El Helicoide=helicoide~Venezuela|Pollsmoor~South Africa|Constitution Hill=old fort~South Africa|Kamiti~Kenya|Luzira~Uganda|Kirikiri~Nigeria|Tora~Egypt|Scorpion Prison=scorpion~Egypt|Abu Salim~Libya|Tazmamart~Morocco|Ofer~West Bank|Ketziot~Israel|Bagram~Afghanistan|Pul-e-Charkhi=pul e charkhi~Afghanistan|Camp Bucca~Iraq|Fremantle~Australia|Pentridge~Australia|Boggo Road~Australia|Mount Eden~New Zealand|Kingston Penitentiary~Canada|Halden~Norway, famously humane|Bastøy=bastoy~Norway|Kumla~Sweden|Långholmen=langholmen~Stockholm|Patarei~Tallinn|Karosta~Latvia|Lukiškės=lukiskes~Vilnius|Okrestina~Minsk|Volodarka~Minsk|Mamertine=mamertine prison~Rome|Regina Coeli~Rome|Poggioreale prison~Naples|Ucciardone~Palermo|Asinara~Sardinia|Santo Stefano~Italy|Marshalsea~London|Fleet Prison=fleet~London|Reading Gaol=reading~England|Barlinnie~Glasgow|Wandsworth~London|Spike Island~Ireland|Fresnes~France|Conciergerie~Paris|Moabit~Berlin|Hohenschönhausen=hohenschonhausen~Berlin|Plötzensee=plotzensee~Berlin|Bautzen~Germany|Mokotów=mokotow,rakowiecka~Warsaw|Wronki~Poland|Rawicz~Poland|Strzelce Opolskie~Poland|Barczewo~Poland|Fordon~Bydgoszcz|Qasr=qasr prison~Tehran|Ghezel Hesar~Iran|Sde Teiman~Israel|Camp X-Ray=x ray~Guantanamo|USP Marion=marion~USA|Atlanta Federal Penitentiary=usp atlanta~USA|Terre Haute~USA|Lompoc~USA|Ohio State Reformatory~USA',
+k:'Montelupich~Kraków|Bridewell~London'
+}},
+
+{id:'dem',tag:'WHO · Dementia',q:'Name a type, cause or risk factor of dementia',ctx:'WHO is tackling disparities among people living with dementia.',l2:1,t:{
+p:'Alzheimer\'s disease=alzheimers,alzheimer,alzheimers disease',
+c:'Old age=age,ageing,aging|Early-onset dementia=early onset,young onset,young onset dementia,early onset alzheimers',
+s:'Vascular dementia=vascular|Mixed dementia=mixed|Stroke=strokes|Smoking|Alcohol=excessive alcohol,alcoholism|Head injury=traumatic brain injury,tbi,concussion,brain injury|High blood pressure=hypertension|Diabetes=type 2 diabetes|Physical inactivity=inactivity,lack of exercise|Genetics=genes,family history',
+r:'Lewy body dementia=lewy body,dementia with lewy bodies,dlb,lewy|Frontotemporal dementia=ftd,frontotemporal|Parkinson\'s disease=parkinsons,parkinson,parkinsons disease dementia|Huntington\'s disease=huntingtons,huntington|Creutzfeldt–Jakob disease=cjd,creutzfeldt jakob|Chronic traumatic encephalopathy=cte,dementia pugilistica|Hearing loss|Depression|Social isolation=loneliness,isolation|Obesity|Air pollution=pollution|Low education=lack of education|High cholesterol=ldl cholesterol,cholesterol|Vision loss=untreated vision loss|Down syndrome=downs syndrome|HIV=hiv associated dementia,aids dementia complex,hiv dementia|Korsakoff syndrome=korsakoff,wernicke korsakoff,wernicke korsakoff syndrome|Brain tumour=brain tumor,tumour,tumor|Multiple sclerosis=ms|Vitamin B12 deficiency=b12 deficiency,b12|Hypothyroidism=underactive thyroid|Multi-infarct dementia=multi infarct|Primary progressive aphasia=ppa|Semantic dementia|Sleep apnoea=sleep apnea|Poor sleep=sleep deprivation,lack of sleep',
+d:'Normal pressure hydrocephalus=nph,hydrocephalus|Progressive supranuclear palsy=psp|Corticobasal degeneration=cbd,corticobasal syndrome|Neurosyphilis=syphilis,general paresis|Variant CJD=vcjd,mad cow disease,mad cow|Subdural haematoma=subdural hematoma,subdural|Binswanger\'s disease=binswanger,binswangers|CADASIL|Cerebral amyloid angiopathy=caa,amyloid angiopathy|Wilson\'s disease=wilsons disease,wilson disease|Herpes encephalitis=hsv encephalitis,encephalitis|Lyme disease=neuroborreliosis,lyme|Thiamine deficiency=vitamin b1 deficiency,b1 deficiency|Folate deficiency=folic acid deficiency|Pellagra=niacin deficiency|Hepatic encephalopathy=liver failure|Dialysis dementia=uraemia,uremia,kidney failure|Lupus=sle,systemic lupus erythematosus|Carbon monoxide poisoning=carbon monoxide|Lead poisoning=lead|Mercury poisoning=mercury|Arsenic poisoning=arsenic|Hypoxic brain injury=anoxic brain injury,hypoxia,anoxia|ALS with frontotemporal dementia=als ftd,als,motor neurone disease|Behavioural variant FTD=bvftd,behavioral variant ftd|Logopenic aphasia=logopenic|Pick\'s disease=picks disease,pick disease|Hippocampal sclerosis|Atrial fibrillation=afib|Heart failure|Cushing\'s syndrome=cushings|Sarcoidosis=neurosarcoidosis|Whipple\'s disease=whipples disease|Cryptococcal meningitis=meningitis|PML=progressive multifocal leukoencephalopathy|Benzodiazepines=anticholinergic drugs|Delirium|Frailty|Kidney disease=chronic kidney disease|PTSD=post traumatic stress disorder|Gum disease=periodontitis|Chronic stress=stress|Anaemia=anemia|Epilepsy|Poor diet=diet,unhealthy diet',
+k:'LATE=limbic predominant age related tdp 43 encephalopathy,late dementia~Only named in 2019|Posterior cortical atrophy=pca|Argyrophilic grain disease=agd|Primary age-related tauopathy=part|Gerstmann–Sträussler–Scheinker syndrome=gss,gerstmann straussler scheinker|Fatal familial insomnia=ffi|Kuru|SSPE=subacute sclerosing panencephalitis|Niemann–Pick type C=niemann pick,niemann pick c|Metachromatic leukodystrophy=leukodystrophy|Adrenoleukodystrophy=ald|MELAS|Fahr\'s disease=fahr,fahrs disease|Kufs disease=kufs|CARASIL|Hashimoto\'s encephalopathy=hashimotos encephalopathy|PKAN=hallervorden spatz|Marchiafava–Bignami disease=marchiafava bignami'
+}},
+
+{id:'crime',tag:'UNODC · Crime',q:'Name a type of crime',ctx:'UNODC is fighting AI and deepfake crime by transnational groups. Any crime counts, but the cyber ones go deep.',l2:1,t:{
+p:'Murder=homicide|Theft=stealing|Robbery|Fraud=scam,scams|Drug trafficking=drug dealing,drug smuggling',
+c:'Hooliganism~Our sinking friend approves|Jaywalking~Technically a crime in some places',
+s:'Burglary|Assault|Kidnapping=abduction|Arson|Vandalism=graffiti|Shoplifting|Bribery|Corruption|Extortion|Blackmail|Money laundering=laundering|Human trafficking|Smuggling|Hacking|Identity theft|Terrorism|Tax evasion|Embezzlement|Forgery|Counterfeiting|Stalking|Harassment|Drunk driving=drink driving,dui,dwi|Car theft=auto theft,grand theft auto|Pickpocketing|Mugging|Manslaughter|Piracy=maritime piracy|Phishing|Cyberbullying',
+r:'Deepfake fraud=deepfake scam,deepfakes~Exactly what UNODC is debating|Voice cloning scam=voice cloning,ai voice scam|Sextortion|Ransomware|Romance scam=romance fraud|CEO fraud=business email compromise,bec|Insider trading|Arms trafficking=gun running,arms smuggling,weapons trafficking|Wildlife trafficking=poaching|Organ trafficking|Cyberstalking|DDoS attack=ddos|Credit card fraud=card fraud|Ponzi scheme=ponzi|Pyramid scheme|Perjury|Treason|Espionage=spying|Genocide|War crimes|Crimes against humanity|Hijacking=skyjacking|Carjacking|Hostage taking=hostage-taking|Racketeering|Loan sharking|Illegal gambling|Match fixing=match-fixing|Copyright infringement=software piracy|Hate crime|Domestic violence|Trespassing=trespass|Hit and run|Rioting=riot|Looting|Obstruction of justice|Contempt of court|Sedition|Torture|Slavery|Forced labour=forced labor|Child labour=child labor|Illegal logging|Illegal fishing|Illegal dumping=fly tipping|Election fraud=voter fraud|Insurance fraud|Benefit fraud=welfare fraud|Securities fraud|Price fixing|Bank robbery|Art theft|Doxxing=doxing|Revenge porn=image based abuse,non consensual intimate imagery|Cryptocurrency scam=crypto scam,crypto fraud|Pig butchering scam=pig butchering',
+d:'SIM swapping=sim swap,sim swap fraud|Cryptojacking|Swatting|Skimming=card skimming|Wire fraud|Mail fraud|Cheque fraud=check fraud,check kiting|Market manipulation|Pump and dump|Synthetic identity fraud=synthetic identity|KYC bypass=kyc fraud,biometric spoofing|Virtual kidnapping=fake kidnapping|Grandparent scam=family emergency scam|Antiquities trafficking=looting antiquities|Cigarette smuggling|Fuel smuggling|People smuggling=migrant smuggling|Visa fraud|Bigamy|Impersonating a police officer=impersonating an officer,impersonation|Cattle rustling=rustling|Grave robbing=grave robbery,body snatching|Crime of aggression=aggression~One of the four core ICC crimes|Femicide|Honour killing=honor killing|Assassination|Defamation=libel,slander|Disorderly conduct|Public intoxication|Littering|Speeding|Loitering|Bootlegging|Moonshining|Insurance arson|Cartel=cartel conduct,bid rigging|Malware distribution=malware|Cyber espionage|Botnet|Deepfake disinformation=disinformation,election interference',
+k:'Regicide~Killing a monarch|Barratry~A ship\'s crew defrauding the owner|Simony~Selling church offices|Champerty|Misprision of felony=misprision|Wardriving|Salami slicing~Stealing tiny amounts across many accounts|Typosquatting'
+}},
+
+{id:'apps',tag:'UN Women · Beauty standards',q:'Name a social media platform or photo app',ctx:'UN Women is tackling harmful beauty standards online.',l2:1,t:{
+p:'Instagram=ig,insta|TikTok',
+c:'Facebook=fb,meta|Facetune',
+s:'Snapchat=snap|YouTube|X=twitter,x twitter|Pinterest|Reddit|WhatsApp|Telegram|Discord|Twitch|BeReal|Threads|LinkedIn|Tumblr|Messenger=facebook messenger',
+r:'Bluesky|Mastodon|VK=vkontakte|WeChat|Weibo|Douyin|Kuaishou|Xiaohongshu=rednote,red note,little red book|Bilibili|QQ|Line|KakaoTalk=kakao|Viber|Signal|Lemon8=lemon 8|Likee|Triller|Vine|MySpace|Musical.ly=musically|Clubhouse|Periscope|Ask.fm=askfm|Snow|Lensa|FaceApp|Meitu|BeautyPlus|Picsart|VSCO|CapCut|Flickr|DeviantArt|Quora|Kick|Rumble|Vimeo|Dailymotion|Tinder|Bumble|Hinge|Badoo|Truth Social|Nasza Klasa=nk,nk pl~Poland\'s own 2000s classic|Wykop~Poland|Gadu-Gadu=gadu gadu,gg~Poland',
+d:'Google+=google plus|Orkut|Friendster|Hi5|Bebo|Xanga|LiveJournal|Odnoklassniki=ok ru|Qzone|Naver Band=band|Cyworld|Mixi|Plurk|Taringa|Kwai|Moj|ShareChat|Josh|Roposo|Koo|Zepeto|IMVU|Habbo=habbo hotel|Second Life|Yubo|Wizz|Hoop|Houseparty|Marco Polo|Dubsmash|Tellonym|Yik Yak|Whisper|Kik|Poparazzi|Dispo|Vero|Ello|Peach|Path|MeWe|Minds|Steemit|Bigo Live=bigo|Tango|YouNow|Trovo|Nextdoor|Letterboxd|Goodreads|Substack|Medium|Patreon|Snapseed|Lightroom|Airbrush|PrettyUp|YouCam=youcam makeup|B612|Ulike|SODA|Grono=grono net~Poland|Fotka=fotka pl~Poland',
+k:'Cara|Lips|Spill|Noplace|Lapse|Gas~A 2022 teen compliments app|Sendit'
+}},
+
+{id:'tv',tag:'GDNMUN TV',q:'Name a TV channel or broadcaster',ctx:'GDNMUN TV is the conference\'s own live crew.',l2:1,t:{
+p:'TVN~Home of Pod Napięciem, where our sinking hero comes from|BBC|CNN|Polsat|TVP=tvp1',
+c:'Netflix~A streamer, not a channel, but we\'ll allow it|GDNMUN TV=gdnmun tv~Nice try',
+s:'TVN24=tvn 24|TVP Info|Polsat News|TVP2|Fox News|Al Jazeera|Euronews|MTV|Nickelodeon|Cartoon Network|Disney Channel|HBO|ESPN|Discovery Channel=discovery|National Geographic=nat geo|Eurosport|Canal+=canal plus|Sky News|ITV|Channel 4|NBC|CBS|ABC|France 24|Deutsche Welle=dw',
+r:'TV Puls=puls|TV4|TVN7|TVN Turbo|TVN Style|TVP Sport|TVP Kultura|TVP Historia|TVP Polonia=polonia|Polsat Sport|Eleven Sports=eleven|Superstacja|TV Republika=republika|wPolsce24=wpolsce|Kanał Zero=kanal zero|MSNBC|CNBC|PBS|The CW=cw|Bloomberg TV=bloomberg|BBC One|BBC Two|BBC News|Channel 5|Sky Sports|Al Arabiya|TF1|France 2|Arte|M6|ARD|ZDF|RTL|ProSieben|Sat.1=sat 1|RAI=rai 1|Canale 5=mediaset|TVE=la 1|Antena 3|Telecinco|RT=russia today|Channel One Russia=perviy kanal|NHK|CCTV|KBS|MBC|SBS|Globo=tv globo|Televisa|Telemundo|Univision|CBC|CTV|TRT|beIN Sports=bein|DAZN|History Channel=history|Animal Planet|TLC|Comedy Central|AMC|FX|Showtime|Fox|E!=e|Boomerang|Food Network',
+d:'TVP3 Gdańsk=tvp3,tvp gdansk~Your local station|TVN Fabuła|Polsat Cafe|Polsat Play|Stopklatka|Kino Polska|Filmbox|MiniMini+=minimini|teleTOON+=teletoon|Eska TV|4fun TV=4fun|Polo TV~Disco polo, 24/7|TV Trwam|Zoom TV|Metro TV=metro|TTV|Nowa TV|Fokus TV|ATM Rozrywka|Kanal D|Show TV|Star Plus|Zee TV|Doordarshan|NDTV|Fuji TV|TV Asahi|Phoenix TV|Rai News|HGTV|Travel Channel|Bravo|Lifetime|Hallmark Channel=hallmark|Cartoonito|Sky One|Dave|Al Mayadeen|Press TV|NHK World|CGTN|Sky Italia|Rede Record=record',
+k:'Jetix~Nostalgia unlocked|Fox Kids|Viva Polska=viva~Gone but not forgotten|Polsat 2|Wizja TV=wizja|Nasza TV|Tele 5'
+}},
+
+{id:'gdansk',tag:'Venue · Gdańsk',q:'Name a landmark in Gdańsk',ctx:'Monuments, gates, churches, museums, towers, squares, venues. No streets or districts, just landmarks. GDNMUN is at the European Solidarity Centre.',l2:1,t:{
+p:'Neptune\'s Fountain=fontanna neptuna,neptune fountain,neptune,neptun|Long Market=dlugi targ|Westerplatte|European Solidarity Centre=ecs,europejskie centrum solidarnosci|St. Mary\'s Church=bazylika mariacka,mariacki,st marys basilica,st marys church,kosciol mariacki',
+c:'Gdańsk Shipyard=stocznia gdanska,shipyard,stocznia|Old Town=stare miasto,main town,glowne miasto',
+s:'The Crane=zuraw,crane,gdansk crane|Artus Court=dwor artusa|Golden Gate=zlota brama|Green Gate=zielona brama|Mariacka Street=ulica mariacka,mariacka|Oliwa Cathedral=katedra oliwska|Motława River=motlawa,motlawa river|Museum of the Second World War=muzeum ii wojny swiatowej,ww2 museum,muzeum drugiej wojny swiatowej,museum of ww2|Polsat Plus Arena=stadion energa,amber arena,pge arena,stadion gdansk,energa stadium,stadium|Main Town Hall=ratusz,ratusz glownego miasta,town hall|Polish Post Office=poczta polska,polish post office museum|Monument to the Fallen Shipyard Workers=pomnik poleglych stoczniowcow,three crosses,trzy krzyze|Upland Gate=brama wyzynna|Amber Museum=muzeum bursztynu|Gdańsk Główny station=gdansk glowny,main station,dworzec glowny|Lech Wałęsa Airport=airport,lotnisko,gdansk airport,rebiechowo|Royal Route=droga krolewska,trakt krolewski,long lane,dluga street,ulica dluga',
+r:'Prison Tower=wieza wiezienna|Torture House=katownia|Granary Island=wyspa spichrzow|Ołowianka Island=olowianka|SS Sołdek=soldek,ss soldek|National Maritime Museum=narodowe muzeum morskie,maritime museum|Great Armoury=wielka zbrojownia|Uphagen House=dom uphagena|Golden House=zlota kamienica|St. Catherine\'s Church=kosciol sw katarzyny,st catherines|St. Bridget\'s Church=kosciol sw brygidy,st bridgets|St. John\'s Church=kosciol sw jana|St. Nicholas\' Church=kosciol sw mikolaja,st nicholas church|Royal Chapel=kaplica krolewska|Great Mill=wielki mlyn|Gdańsk Shakespeare Theatre=teatr szekspirowski,shakespeare theatre|Baltic Opera=opera baltycka|Polish Baltic Philharmonic=filharmonia baltycka,filharmonia|Wisłoujście Fortress=twierdza wisloujscie,wisloujscie|Oliwa Park=park oliwski|Gdańsk Zoo=zoo,oliwa zoo,zoo oliwa|Hevelianum|Gradowa Góra=gradowa gora|Biskupia Górka=biskupia gorka|Ergo Arena|Brzeźno Pier=molo brzezno,brzezno pier|Jelitkowo Beach=jelitkowo|Galeria Bałtycka=galeria baltycka|Forum Gdańsk=forum gdansk|BHP Hall=sala bhp,bhp hall|Gate No. 2=brama nr 2,brama numer 2,gate 2,shipyard gate|Long Embankment=dlugie pobrzeze|Wybrzeże Theatre=teatr wybrzeze|Gdańsk University of Technology=politechnika gdanska,politechnika|University of Gdańsk=uniwersytet gdanski|Amber Sky=ferris wheel,diabelski mlyn,amber sky ferris wheel|National Museum=muzeum narodowe,last judgment,last judgement~Home of Memling\'s Last Judgment|Museum of Gdańsk=muzeum gdanska|Coal Market=targ weglowy|Fish Market=targ rybny|Millennium Cross=krzyz milenijny~Up on Gradowa Góra|Monument to the Defenders of the Coast=pomnik obroncow wybrzeza,westerplatte monument|Market Hall=hala targowa|Olivia Star=olivia business centre,olivia|Old Town Hall=ratusz staromiejski|Nowy Port Lighthouse=latarnia nowy port,latarnia morska,lighthouse|Shipyard cranes=zurawie stoczniowe,cranes|Solidarity Square=plac solidarnosci|Stągiewna Gate=brama stagiewna,stagwie mleczne,milk churns,milk churn gate',
+d:'Court of the Fraternity of St George=dwor bractwa sw jerzego|Abbots\' Palace=palac opatow|St. Mary\'s Gate=brama mariacka|Bread Gate=brama chlebnicka|Cow Gate=brama krowia|Holy Spirit Gate=brama swietego ducha|St. John\'s Gate=brama swietojanska|Straganiarska Gate=brama straganiarska|Lowland Gate=brama nizinna|Little Mill=maly mlyn|Holy Trinity Church=kosciol sw trojcy,church of the holy trinity|St. Peter and Paul\'s Church=kosciol sw piotra i pawla|St. Barbara\'s Church=kosciol sw barbary|St. Joseph\'s Church=kosciol sw jozefa|Corpus Christi Church=kosciol bozego ciala|St. Elizabeth\'s Church=kosciol sw elzbiety|St. James\'s Church=kosciol sw jakuba|Jacek Tower=baszta jacek|Kiek in de Kök=kiek in de kok,baszta kiek in de kok|Straw Tower=baszta slomiana|Swan Tower=baszta labedz|White Tower=baszta biala|Wood Market=targ drzewny|Hala Olivia=olivia hall|Palm House=palmiarnia,oliwa palm house|Abbots\' Granary=spichlerz opacki,ethnographic museum|Teatr Miniatura=miniatura theatre|Madison=madison shopping centre|Medical University of Gdańsk=gumed|Sobieski Monument=pomnik jana iii sobieskiego,jan iii sobieski monument,john iii sobieski monument|Świętopełk Monument=pomnik swietopelka|Monument to the Defenders of the Polish Post=pomnik obroncow poczty polskiej|Westerplatte Guardhouse No. 1=wartownia nr 1,wartownia|Bird Paradise Reserve=ptasi raj|Green Bridge=most zielony|Cow Bridge=most krowi|Ołowianka Footbridge=kladka na olowianke,olowianka footbridge,footbridge|Imperial Shipyard=stocznia cesarska|Naturalists\' House=dom przyrodnikow,archaeological museum,muzeum archeologiczne|Stogi Beach=stogi|Brzeźno Beach=brzezno beach|Sobieszewo Island=wyspa sobieszewska,sobieszewo|Pachołek Hill=pacholek,wzgorze pacholek~Viewpoint over Oliwa',
+k:'III LO Topolówka=topolowka,iii lo,3 lo,3rd high school,iii liceum~The school that organises GDNMUN|Fahrenheit\'s Thermometer=termometr fahrenheita,fahrenheit thermometer~The replica on Long Market. Fahrenheit was born in Gdańsk|100cznia=stocznia 100~Container food and culture spot in the shipyard|B90 Club=b90,klub b90~Concert hall in the old shipyard halls'
+}},
+
+{id:'syrc',tag:'UNSC · Syria',q:'Name a city or town in Syria',ctx:'The Security Council is debating "The situation in Syria".',l2:1,t:{
+p:'Damascus|Aleppo',
+s:'Homs|Hama|Latakia=lattakia|Raqqa=ar raqqah,raqqah|Idlib|Palmyra=tadmur|Deir ez-Zor=deir ezzor,deir el zor,deir ez zor',
+r:'Tartus=tartous|Daraa=deraa|Al-Hasakah=hasakah,hasakeh|Qamishli|As-Suwayda=suwayda,sweida|Douma|Kobani=ayn al arab,kobane|Afrin|Manbij|Jarabulus|Azaz|Al-Bab=al bab|Quneitra|Ghouta=eastern ghouta|Maaloula|Sednaya=saydnaya|Bosra=busra|Yarmouk=yarmouk camp|Darayya=daraya|Khan Shaykhun=khan sheikhoun|Abu Kamal=al bukamal,albukamal|Tabqa=al thawrah|Ras al-Ayn=ras al ain,serekaniye|Tell Abyad=tal abyad',
+d:'Zabadani|Madaya|Jobar|Harasta|Yabroud|Al-Qusayr=qusayr|Rastan|Talbiseh|Salamiyah=salamiyeh|Masyaf|Baniyas|Jableh|Qardaha|Safita|Izra|Nawa|Jasim|Inkhil|Al-Mayadin=mayadin|Amuda|Al-Malikiyah=derik|Shaddadi|Nabk|Qutayfah|Dumayr|Kiswah|Muadamiyat al-Sham=moadamiyeh|Zamalka|Ain Tarma|Erbin|Saqba|Kafr Batna|Hamouriyah|Ariha|Binnish|Taftanaz|Atarib|Darat Izza|Sarmada|Harem=harim|Salqin|Kafr Nabl=kafranbel|Maarat al-Numan=maarrat al numan|Saraqib|Jisr al-Shughur=jisr ash shughur|Al-Safirah=safira|Deir Hafer|Maskanah|Suran|Morek|Kafr Zita|Latamneh|Mahardah|Suqaylabiyah|Qalaat al-Madiq|Tell Rifaat|Nubl|Zahraa|Mare\'=marea|Sheikh Maskin|Tafas|Dael|Muzayrib|Shahba|Salkhad|Qatana|Al-Tall=al tall|Jdeidat Artouz|Kessab=kasab|Slinfah|Al-Haffah=haffah|Al-Hol=al hol camp|Rukban=rukban camp|Busra al-Harir|Tadef|Al-Sanamayn=sanamayn|Kanaker|Darkush|Armanaz|Ma\'arrat Misrin=maarat misrin|Hreitan|Anadan|Tal Tamr|Qahtaniyah|Ayn Issa=ain issa|Hajin|Al-Shaafah|Al-Susah|Busayra|Al-Asharah',
+k:'Ugarit=ras shamra~Ancient city near Latakia|Dura-Europos=dura europos~Ancient ruin on the Euphrates|Ebla~Bronze Age city south of Aleppo|Mari=tell hariri~Ancient city near Abu Kamal'
+}},
+
+{id:'ww1',tag:'AHC · WWI',q:'Name a leader, monarch, commander or famous figure of WWI',ctx:'In the Alternative Historical Committee, Germany won the Great War.',l2:1,t:{
+p:'Kaiser Wilhelm II=wilhelm ii,kaiser wilhelm,wilhelm,kaiser|Franz Ferdinand=archduke franz ferdinand',
+c:'Winston Churchill=churchill|Adolf Hitler=hitler~A corporal then, not a leader. Too clever',
+s:'Gavrilo Princip=princip|Woodrow Wilson=wilson|Nicholas II=tsar nicholas,nicholas,tsar nicholas ii|George V=king george v|Franz Joseph=franz josef,emperor franz joseph|Paul von Hindenburg=hindenburg|Ferdinand Foch=foch|Georges Clemenceau=clemenceau|David Lloyd George=lloyd george|Józef Piłsudski=pilsudski~Led the Polish Legions|Vladimir Lenin=lenin|Mata Hari|Lawrence of Arabia=t e lawrence,lawrence|Red Baron=manfred von richthofen,richthofen',
+r:'Erich Ludendorff=ludendorff|Douglas Haig=haig|Joseph Joffre=joffre|Philippe Pétain=petain|John J. Pershing=pershing|Herbert Kitchener=kitchener|Erich von Falkenhayn=falkenhayn|Helmuth von Moltke=moltke|August von Mackensen=mackensen|Conrad von Hötzendorf=conrad,hotzendorf|Enver Pasha=enver|Talaat Pasha=talaat|Djemal Pasha=cemal pasha,djemal|Mustafa Kemal=ataturk,mustafa kemal ataturk|Alexander Kerensky=kerensky|Leon Trotsky=trotsky|Raymond Poincaré=poincare|H. H. Asquith=asquith|Edward Grey=sir edward grey,grey|Karl I=charles i of austria,emperor karl|Mehmed V=sultan mehmed v|Albert I=king albert,albert i of belgium|Victor Emmanuel III=victor emmanuel|Vittorio Orlando=orlando|Luigi Cadorna=cadorna|Aleksei Brusilov=brusilov|Alfred von Tirpitz=tirpitz|John Jellicoe=jellicoe|David Beatty=beatty|Edmund Allenby=allenby|Faisal I=faisal,emir faisal|Hussein bin Ali=sharif hussein|Edith Cavell=cavell|Arthur Zimmermann=zimmermann,zimmermann telegram|Theobald von Bethmann Hollweg=bethmann hollweg|Roman Dmowski=dmowski|Ignacy Paderewski=paderewski|Józef Haller=haller,blue army|Tomáš Masaryk=masaryk|Eddie Rickenbacker=rickenbacker|Alvin York=sergeant york|Paul von Lettow-Vorbeck=lettow vorbeck,lettow-vorbeck|Otto Liman von Sanders=liman von sanders|Robert Nivelle=nivelle|Joseph Gallieni=gallieni|Eleftherios Venizelos=venizelos|Peter I of Serbia=king peter|Ferdinand I of Bulgaria=tsar ferdinand|Ferdinand I of Romania=king ferdinand|Grand Duke Nicholas=nikolai nikolaevich|Alexander Samsonov=samsonov|Paul von Rennenkampf=rennenkampf|John French=sir john french|Reinhard Scheer=scheer|Franz von Hipper=hipper|Max von Baden=prince max|Friedrich Ebert=ebert|Wilfred Owen~War poet|Siegfried Sassoon=sassoon~War poet|John McCrae=mccrae,in flanders fields',
+d:'Armando Diaz=diaz|Herbert Plumer=plumer|Henry Rawlinson=rawlinson|Julian Byng=byng|Hubert Gough=gough|Charles Townshend=townshend|John Monash=monash|Arthur Currie=currie|Charles Mangin=mangin|Édouard de Castelnau=castelnau|Max Hoffmann=hoffmann|Rupprecht of Bavaria=crown prince rupprecht,rupprecht|Crown Prince Wilhelm=kronprinz wilhelm|Alexander von Kluck=kluck|Karl von Bülow=bulow|Max von Gallwitz=gallwitz|Svetozar Boroević=boroevic|Oskar Potiorek=potiorek|Leopold Berchtold=berchtold|István Tisza=tisza|Ottokar Czernin=czernin|Sergey Sazonov=sazonov|Vladimir Sukhomlinov=sukhomlinov|Mikhail Alekseyev=alekseyev|Lavr Kornilov=kornilov|Nikolai Yudenich=yudenich|Radko Dimitriev=dimitriev|Nikola Zhekov=zhekov|Radomir Putnik=putnik|Živojin Mišić=misic|Dragutin Dimitrijević=apis|Queen Marie of Romania=queen marie|Ion Brătianu=bratianu|Constantine I of Greece=king constantine|Sidney Sonnino=sonnino|René Viviani=viviani|Bonar Law=andrew bonar law|Jacky Fisher=john fisher,fisher|Roger Casement=casement|Kurt Eisner=eisner|Rosa Luxemburg=luxemburg|Karl Liebknecht=liebknecht|Ernst Jünger=junger,storm of steel|Erich Maria Remarque=remarque~Wrote All Quiet on the Western Front|Billy Bishop=bishop|Roland Garros=garros|Georges Guynemer=guynemer|Oswald Boelcke=boelcke|Max Immelmann=immelmann|Anthony Fokker=fokker|Fritz Haber=haber~Pioneered chemical weapons|Carl Gustaf Mannerheim=mannerheim|Józef Dowbor-Muśnicki=dowbor musnicki|Edward Rydz-Śmigły=rydz smigly|Władysław Sikorski=sikorski|Kazimierz Sosnkowski=sosnkowski',
+k:'Wojciech Korfanty=korfanty|Nikolai Ivanov=ivanov|Hugo Junkers=junkers|Gustav Krupp=krupp|Big Bertha~A gun, not a person, but a legend|Stubby=sergeant stubby~A dog. A decorated war dog'
+}},
+
+{id:'trib',tag:'ICC · Tribunals',q:'Name a person tried, indicted or wanted by an international criminal court or tribunal',ctx:'ICC, Yugoslavia and Rwanda tribunals, Nuremberg, Tokyo, Sierra Leone, Cambodia… The ICC committee is running Prosecutor v. Bemba.',l2:1,t:{
+p:'Jean-Pierre Bemba=bemba~This year\'s ICC case|Slobodan Milošević=milosevic|Hermann Göring=goring,goering',
+c:'Vladimir Putin=putin~ICC arrest warrant, 2023|Adolf Hitler=hitler~Never tried; he died before Nuremberg',
+s:'Radovan Karadžić=karadzic|Ratko Mladić=mladic|Omar al-Bashir=al bashir,bashir|Muammar Gaddafi=gaddafi|Joseph Kony=kony|Charles Taylor=taylor|Rudolf Hess=hess|Benjamin Netanyahu=netanyahu~ICC arrest warrant, 2024|Rodrigo Duterte=duterte~Arrested and sent to The Hague in 2025|Laurent Gbagbo=gbagbo|Thomas Lubanga=lubanga~The ICC\'s first ever verdict|Joachim von Ribbentrop=ribbentrop|Albert Speer=speer|Hideki Tojo=tojo',
+r:'Bosco Ntaganda=ntaganda|Germain Katanga=katanga|Dominic Ongwen=ongwen|Saif al-Islam Gaddafi=saif gaddafi,saif al islam|Uhuru Kenyatta=kenyatta|William Ruto=ruto|Ahmad al-Faqi al-Mahdi=al mahdi~Destroyed Timbuktu\'s shrines|Ali Kushayb=kushayb,abd al rahman|Yoav Gallant=gallant|Maria Lvova-Belova=lvova belova|Charles Blé Goudé=ble goude|Mathieu Ngudjolo Chui=ngudjolo|Dragoljub Ojdanić=ojdanic|Vojislav Šešelj=seselj|Duško Tadić=tadic~First ICTY trial|Radislav Krstić=krstic|Ante Gotovina=gotovina|Ramush Haradinaj=haradinaj|Slobodan Praljak=praljak|Biljana Plavšić=plavsic|Jean-Paul Akayesu=akayesu~First ever genocide conviction|Jean Kambanda=kambanda|Théoneste Bagosora=bagosora|Félicien Kabuga=kabuga|Ferdinand Nahimana=nahimana|Pauline Nyiramasuhuko=nyiramasuhuko|Wilhelm Keitel=keitel|Alfred Jodl=jodl|Karl Dönitz=donitz,doenitz|Erich Raeder=raeder|Julius Streicher=streicher|Hans Frank=frank|Ernst Kaltenbrunner=kaltenbrunner|Alfred Rosenberg=rosenberg|Martin Bormann=bormann~Tried in absentia|Baldur von Schirach=schirach|Fritz Sauckel=sauckel|Arthur Seyss-Inquart=seyss inquart|Franz von Papen=papen|Hjalmar Schacht=schacht|Wilhelm Frick=frick|Walther Funk=funk|Konstantin von Neurath=neurath|Hans Fritzsche=fritzsche|Kaing Guek Eav=duch|Nuon Chea|Khieu Samphan|Ieng Sary|Hissène Habré=habre|Foday Sankoh=sankoh|Ahmed Haroun=haroun,ahmad harun',
+d:'Aimé Kilolo=kilolo~Bemba\'s lawyer, convicted of witness tampering|Jean-Jacques Mangenda=mangenda|Fidèle Babala=babala|Narcisse Arido=arido|Al Hassan Ag Abdoul Aziz=al hassan|Alfred Yekatom=yekatom|Patrice-Edouard Ngaïssona=ngaissona|Mahamat Said Abdel Kani=mahamat said|Maxime Mokom=mokom|Abdallah Banda=banda|Bahar Idriss Abu Garda=abu garda|Saleh Jerbo=jerbo|Abdel Raheem Muhammad Hussein=hussein|Callixte Mbarushimana=mbarushimana|Sylvestre Mudacumura=mudacumura|Joshua Sang=sang|Henry Kosgey=kosgey|Francis Muthaura=muthaura|Paul Gicheru=gicheru|Simone Gbagbo=simone|Mahmoud al-Werfalli=werfalli|Tihomir Blaškić=blaskic|Dario Kordić=kordic|Anto Furundžija=furundzija|Dragoljub Kunarac=kunarac|Momčilo Krajišnik=krajisnik|Milan Babić=babic|Milan Martić=martic|Jovica Stanišić=stanisic|Franko Simatović=simatovic|Momčilo Perišić=perisic|Jadranko Prlić=prlic|Naser Orić=oric|Zejnil Delalić=delalic|Dražen Erdemović=erdemovic|Goran Jelisić=jelisic|Mile Mrkšić=mrksic|Veselin Šljivančanin=sljivancanin|Hassan Ngeze=ngeze|Jean-Bosco Barayagwiza=barayagwiza|Augustin Bizimungu=bizimungu|Augustin Ndindiliyimana=ndindiliyimana|Juvénal Kajelijeli=kajelijeli|Alfred Musema=musema|Georges Rutaganda=rutaganda|Élizaphan Ntakirutimana=ntakirutimana|Koki Hirota=hirota|Iwane Matsui=matsui|Sadao Araki=araki|Kenji Doihara=doihara|Seishirō Itagaki=itagaki|Ieng Thirith|Sam Hinga Norman=hinga norman|Issa Sesay=sesay|Morris Kallon=kallon|Augustine Gbao=gbao|Alex Tamba Brima=brima|Brima Kamara=kamara|Santigie Kanu=kanu|Moinina Fofana=fofana|Allieu Kondewa=kondewa|Mohammed Deif=deif|Abdullah al-Senussi=senussi',
+k:'Robert Ley=ley~Took his own life before the Nuremberg verdict|Gustav Krupp=krupp~Ruled unfit for trial at Nuremberg|Sergei Kobylash=kobylash|Viktor Sokolov=sokolov|Valery Gerasimov=gerasimov|Sergei Shoigu=shoigu|Khaled El Hishri=el hishri~Arrested in Germany in 2025'
+}},
+
+{id:'clubs',tag:'Lechia · Football',q:'Name a Polish football club, past or present',ctx:'Our sinking friend is a Lechia Gdańsk man.',l2:1,t:{
+p:'Lechia Gdańsk=lechia,lechia gdansk~Biało-zieloni. The right answer|Legia Warsaw=legia,legia warszawa',
+c:'Arka Gdynia=arka~Bold choice to type this at GDNMUN',
+s:'Lech Poznań=lech,lech poznan|Wisła Kraków=wisla krakow,wisla|Cracovia|Górnik Zabrze=gornik zabrze,gornik|Ruch Chorzów=ruch chorzow,ruch|Widzew Łódź=widzew,widzew lodz|ŁKS Łódź=lks,lks lodz|Śląsk Wrocław=slask,slask wroclaw|Pogoń Szczecin=pogon,pogon szczecin|Jagiellonia Białystok=jagiellonia,jaga|Raków Częstochowa=rakow,rakow czestochowa|Zagłębie Lubin=zaglebie lubin|Piast Gliwice=piast|Korona Kielce=korona',
+r:'Stal Mielec=stal mielec|Motor Lublin=motor|GKS Katowice=gks katowice|Radomiak Radom=radomiak|Puszcza Niepołomice=puszcza|Warta Poznań=warta|Wisła Płock=wisla plock|Bruk-Bet Termalica=termalica,bruk bet,nieciecza|Zagłębie Sosnowiec=zaglebie sosnowiec|Odra Opole=odra opole|Polonia Warsaw=polonia warszawa,polonia|Polonia Bytom=polonia bytom|Bałtyk Gdynia=baltyk gdynia,baltyk|Stomil Olsztyn=stomil|Chrobry Głogów=chrobry|GKS Tychy=gks tychy|GKS Bełchatów=gks belchatow,belchatow|Miedź Legnica=miedz,miedz legnica|Sandecja Nowy Sącz=sandecja|Podbeskidzie Bielsko-Biała=podbeskidzie|Resovia|Stal Rzeszów=stal rzeszow|Górnik Łęczna=gornik leczna|Zawisza Bydgoszcz=zawisza|Odra Wodzisław=odra wodzislaw|Amica Wronki=amica|Dyskobolia Grodzisk=dyskobolia,groclin|Hutnik Kraków=hutnik|Garbarnia Kraków=garbarnia|Szombierki Bytom=szombierki|Gwardia Warsaw=gwardia warszawa,gwardia|Olimpia Grudziądz=olimpia|Znicz Pruszków=znicz|Chojniczanka Chojnice=chojniczanka|Wigry Suwałki=wigry|Kotwica Kołobrzeg=kotwica|Unia Tarnów=unia tarnow|Elana Toruń=elana|KSZO Ostrowiec=kszo|Lechia Zielona Góra=lechia zielona gora|Gryf Wejherowo=gryf|Bytovia Bytów=bytovia|Błękitni Stargard=blekitni|Siarka Tarnobrzeg=siarka|Wisła Puławy=wisla pulawy|Avia Świdnik=avia|Górnik Wałbrzych=gornik walbrzych|Ruch Radzionków=ruch radzionkow|Pelikan Łowicz=pelikan',
+d:'Rozwój Katowice=rozwoj|Zagłębie Wałbrzych=zaglebie walbrzych|Unia Racibórz=unia raciborz|Tarnovia Tarnów=tarnovia|Pogoń Siedlce=pogon siedlce|Legionovia Legionowo=legionovia|Concordia Elbląg=concordia|Olimpia Elbląg=olimpia elblag|Jeziorak Iława=jeziorak|Drwęca Nowe Miasto=drweca|Sokół Ostróda=sokol ostroda|Pogoń Grodzisk Mazowiecki=pogon grodzisk|Świt Nowy Dwór=swit|Hetman Zamość=hetman|Stal Stalowa Wola=stal stalowa wola|Wisłoka Dębica=wisloka|Karpaty Krosno=karpaty|JKS Jarosław=jks jaroslaw|Polonia Przemyśl=polonia przemysl|Igloopol Dębica=igloopol|Moto Jelcz Oława=moto jelcz|Ślęza Wrocław=sleza|Promień Żary=promien|Arka Nowa Sól=arka nowa sol|Flota Świnoujście=flota|Kluczevia Stargard=kluczevia|Gwardia Koszalin=gwardia koszalin|Bałtyk Koszalin=baltyk koszalin|Polonia Środa Wielkopolska=polonia sroda|Unia Janikowo=unia janikowo|Polonia Gdańsk=polonia gdansk~Gdańsk\'s other club|Gedania Gdańsk=gedania~Gdańsk club founded in 1922|Stoczniowiec Gdańsk=stoczniowiec|Orlęta Radzyń Podlaski=orleta|Start Otwock=start|Mazur Ełk=mazur|Granica Kętrzyn=granica|Wda Świecie=wda|Unia Skierniewice=unia skierniewice|Pilica Białobrzegi=pilica|Broń Radom=bron radom|Czarni Żagań=czarni zagan|GKS Jastrzębie=gks jastrzebie,jastrzebie|Kolejarz Stróże=kolejarz|Wieczysta Kraków=wieczysta',
+k:'Pogoń Lwów=pogon lwow~Pre-war Polish champion from Lwów|Czarni Lwów=czarni lwow|Warszawianka=warszawianka|ŁTSG Łódź=ltsg|Union-Touring Łódź=union touring|1. FC Katowice=1 fc katowice|Naprzód Lipiny=naprzod lipiny|Ruch Wielkie Hajduki=wielkie hajduki~Ruch Chorzów\'s original name'
+}}
+];
+
+const T={
+  p:{n:'Plankton',pts:10,e:'🫧',c:'#7fd3ff',d:'The obvious one'},
+  c:{n:'Too Clever',pts:15,e:'🦀',c:'#ffb36b',d:'Feels niche, everyone thinks of it'},
+  s:{n:'Schooler',pts:30,e:'🐟',c:'#6ee7b7',d:'Solid, past the obvious'},
+  r:{n:'Rare',pts:60,e:'🐙',c:'#c4a1ff',d:'Uncommon but known'},
+  d:{n:'Deep Cut',pts:85,e:'🦑',c:'#ff7eb6',d:'Properly obscure'},
+  k:{n:'One in a Krillion',pts:100,e:'🦐',c:'#ffe066',d:'The nichest of the niche'}
+};
+const ORDER=['k','d','r','s','c','p'];
+function norm(s){
+  s=(s||'').toLowerCase().replace(/ł/g,'l').replace(/ø/g,'o').replace(/ß/g,'ss').normalize('NFD').replace(/[̀-ͯ]/g,'');
+  s=s.replace(/&/g,' and ').replace(/['’`]/g,'').replace(/\+/g,' plus ').replace(/[^a-z0-9]+/g,' ').trim();
+  s=s.replace(/\bmodel united nations\b/g,'mun').replace(/\bsaint\b/g,'st');
+  s=s.replace(/^(motion (to|for) |motion |a |an |the )+/,'');
+  return s.replace(/\s+/g,' ').trim();
+}
+function lev(a,b){
+  if(a===b)return 0; const m=a.length,n=b.length; if(!m)return n; if(!n)return m;
+  let prev=Array.from({length:n+1},(_,i)=>i),cur=new Array(n+1);
+  for(let i=1;i<=m;i++){cur[0]=i;for(let j=1;j<=n;j++){cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));}[prev,cur]=[cur,prev];}
+  return prev[n];
+}
+function countryTiers(set){
+  // rank by fame inside the set; whole fame groups share a tier
+  const sorted=set.slice().sort((a,b)=>b.fame-a.fame);
+  const n=sorted.length, cuts=[['p',.18],['s',.42],['r',.68],['d',.88],['k',1.01]];
+  const groupMid={}; let i=0;
+  while(i<n){let j=i;while(j<n&&sorted[j].fame===sorted[i].fame)j++;groupMid[sorted[i].fame]=((i+j)/2)/n;i=j;}
+  return sorted.map(c=>{const q=groupMid[c.fame];const tier=cuts.find(x=>q<x[1])[0];return [c.name,tier,c.alias.split(',').join('|'),''];});
+}
+function buildPrompt(p){
+  let items;
+  if(p.a) items=p.a;
+  else if(p.gen) items=countryTiers(COUNTRIES.filter(p.gen));
+  else {
+    items=[];
+    for(const k of ORDER.slice().reverse()){ if(!p.t[k])continue;
+      p.t[k].split('|').map(x=>x.trim()).filter(Boolean).forEach(it=>{
+        const [main,note]=it.split('~'); const [name,al]=main.split('=');
+        items.push([name.trim(),k,(al||'').split(',').map(x=>x.trim()).filter(Boolean).join('|'),(note||'').trim()]);
+      });
+    }
+  }
+  const firsts={};
+  if(p.person) items.forEach(a=>{const f=norm(a[0]).split(' ')[0];firsts[f]=(firsts[f]||0)+1;});
+  const seen=new Set();
+  p.list=[];
+  items.forEach(a=>{
+    if(seen.has(norm(a[0])))return; seen.add(norm(a[0]));
+    const keys=new Set([norm(a[0])]);
+    (a[2]||'').split('|').filter(Boolean).forEach(x=>keys.add(norm(x)));
+    if(p.person){
+      const parts=norm(a[0]).split(' ');
+      keys.add(parts[parts.length-1]); keys.add(parts[0]+' '+parts[parts.length-1]);
+      if(firsts[parts[0]]===1) keys.add(parts[0]);
+    }
+    const ks=[...keys].filter(Boolean); ks.slice().forEach(k=>{const c=k.replace(/ /g,'');if(c.length>=4)ks.push(c);});
+    p.list.push({name:a[0],tier:a[1],note:a[3]||'',keys:[...new Set(ks)]});
+  });
+  return p;
+}
+P.forEach(buildPrompt);
+function match(p,input){
+  const x=norm(input); if(!x)return null; const xc=x.replace(/ /g,'');
+  for(const e of p.list){ if(e.keys.includes(x)||e.keys.includes(xc)) return e; }
+  let best=null,bd=99;
+  for(const e of p.list){ for(const k of e.keys){
+    const allow=k.length<=4?0:k.length<=7?1:2; if(Math.abs(k.length-x.length)>allow)continue;
+    const d=lev(x,k); if(d<=allow&&d<bd){bd=d;best=e;}
+  }}
+  return best;
+}
+
+</script>
+<script src="config.js"></script>
+<script>
+// =====================================================================
+//  LEADERBOARD LINK: put it in config.js (easiest on an iPad).
+//  If you don't use config.js, paste the /exec URL between the quotes.
+// =====================================================================
+const SCORE_URL = (typeof window.GDNK_SCORE_URL==='string' && window.GDNK_SCORE_URL.trim()) || 'PASTE_SCORE_URL_HERE';
+// =====================================================================
+</script>
+<script>
+// ===== utils =====
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
+function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v);}catch(e){return null;}}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function rng(seed){let h=1779033703^seed.length;for(let i=0;i<seed.length;i++){h=Math.imul(h^seed.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296;};}
+function shuffle(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function cyrb(str,seed=7){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);}
+const codeNorm=s=>(s||'').toLowerCase().replace(/\s+/g,'');
+const L2_HASH='12zqpsqe1tp', DEV_HASH='2bwm88dhujs', L2_ENC='IAAABBkCSQkHCQUC';
+function decodeL2(key){const b=atob(L2_ENC);let o='';for(let i=0;i<b.length;i++)o+=String.fromCharCode(b.charCodeAt(i)^key.charCodeAt(i%key.length));return o;}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.remove('hide');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.add('hide'),2000);}
+async function copy(text){try{await navigator.clipboard.writeText(text);toast('Copied!');}catch(e){toast('Couldn\'t copy. Long-press to select it instead');}}
+const SCREENS=['home','nick','game','end','lock','setup','party','pend','dev','guide'];
+function show(id){
+  SCREENS.forEach(s=>$(s).classList.toggle('hide',s!==id));
+  const sink=['home','nick','game','end'].includes(id);
+  $('sinkTrack').classList.toggle('hide',!sink); document.body.classList.toggle('sinker',sink);
+  if(id==='home'||id==='nick') setDepth(0);
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-home]').forEach(b=>b.addEventListener('click',()=>{stopTimers();show('home');}));
+function stopTimers(){cancelAnimationFrame(G&&G.raf);if(PG){PG.locked=true;cancelAnimationFrame(PG.raf);clearTimeout(PG.hand);}}
+
+// ===== ocean + sinking =====
+(function(){const b=$('bubbles');for(let i=0;i<16;i++){const s=document.createElement('span');const z=4+Math.random()*12;s.style.cssText=`left:${Math.random()*100}%;width:${z}px;height:${z}px;animation-duration:${9+Math.random()*14}s;animation-delay:${-Math.random()*20}s`;b.appendChild(s);}})();
+function setDepth(m){
+  const f=Math.min(1,m/7000);
+  document.documentElement.style.setProperty('--sink',f.toFixed(3));
+  $('dark').style.opacity=(f*.85).toFixed(2); $('rays').style.opacity=(1-f).toFixed(2);
+  $('surface').style.opacity=f>0?'.15':'.55';
+}
+function drawTicks(){
+  document.documentElement.style.setProperty('--vh',window.innerHeight+'px');
+  const h=window.innerHeight, top=60+26, span=h-210; let html='';
+  for(let i=0;i<=7;i++){html+=`<div class="tick" style="top:${top+span*i/7}px">${i?i+'k':'0'}</div>`;}
+  $('ticks').innerHTML=html;
+}
+drawTicks(); window.addEventListener('resize',drawTicks); window.addEventListener('orientationchange',()=>setTimeout(drawTicks,300));
+$('legend').innerHTML=ORDER.slice().reverse().map(k=>`<span>${T[k].e}</span><span style="color:${T[k].c}">${T[k].n} <span class="muted" style="font-size:12px">· ${T[k].d}</span></span><span class="p">${T[k].pts}</span>`).join('');
+
+// ===== shared leaderboard (db) =====
+let DB=null, USER=null;
+(async()=>{try{if(window.claude&&claude.use){DB=await claude.use('db');USER=await claude.use('user');}}catch(e){DB=null;}})();
+const nickKey=n=>norm(n).replace(/ /g,'-').slice(0,60)||'anon';
+async function pushShared(run){
+  if(!DB||!USER)return false;
+  try{
+    const uid=await USER.id(); if(!uid)return false;
+    const ref=DB.doc('scores/'+uid); const snap=await ref.get();
+    const data=snap.exists?JSON.parse(JSON.stringify(snap.data())):{entries:{}};
+    data.entries=data.entries||{}; const k=nickKey(run.nick); const cur=data.entries[k];
+    if(cur&&cur.best>=run.total)return true;
+    data.entries[k]={nick:run.nick,best:run.total,emo:run.emo,date:run.date,at:Date.now()};
+    await ref.set(data); return true;
+  }catch(e){return false;}
+}
+async function readShared(){
+  if(!DB)return null;
+  return await new Promise(res=>{
+    const t=setTimeout(()=>res(null),10000);
+    DB.collection('scores').limit(1000).get().then(q=>{clearTimeout(t);const out=[];q.docs.forEach(d=>{const e=(d.data()||{}).entries||{};Object.values(e).forEach(v=>{if(v&&typeof v.best==='number'&&typeof v.nick==='string')out.push({nick:v.nick.slice(0,40),total:v.best,emo:String(v.emo||'').slice(0,40),date:String(v.date||''),src:'shared'});});});res(out);}).catch(()=>{clearTimeout(t);res(null);});
+  });
+}
+function saveLocalRun(run){const a=ls('gdnk-runs')||[];a.push(run);ls('gdnk-runs',a.slice(-400));}
+const HAS_REMOTE=/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec/.test(SCORE_URL.trim());
+async function postRemote(run){
+  const r=await fetch(SCORE_URL.trim(),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({nick:run.nick,total:run.total,emo:run.emo,date:run.date})});
+  const j=await r.json(); if(!j.ok)throw new Error(j.error||'rejected'); return true;
+}
+async function pushRemote(run){
+  if(!HAS_REMOTE)return;
+  try{await postRemote(run);}catch(e){const q=ls('gdnk-pending')||[];q.push(run);ls('gdnk-pending',q.slice(-50));}
+}
+async function flushPending(){
+  if(!HAS_REMOTE)return; const q=ls('gdnk-pending')||[]; if(!q.length)return; const left=[];
+  for(const run of q){try{await postRemote(run);}catch(e){left.push(run);}}
+  ls('gdnk-pending',left);
+}
+async function readRemote(){
+  if(!HAS_REMOTE)return null;
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),12000);
+  try{const r=await fetch(SCORE_URL.trim()+(SCORE_URL.includes('?')?'&':'?')+'t='+Date.now(),{signal:ctl.signal});const j=await r.json();clearTimeout(t);
+    if(!j.ok)return null; return {dives:j.dives,sheet:/^https:\/\/docs\.google\.com\//.test(j.sheet||'')?j.sheet:'',scores:(j.scores||[]).map(v=>({nick:String(v.nick).slice(0,40),total:Number(v.total)||0,emo:String(v.emo||'').slice(0,40),date:String(v.date||'').slice(0,10),src:'online'}))};
+  }catch(e){clearTimeout(t);return null;}
+}
+setTimeout(flushPending,1500);
+
+// ===== LEVEL 1 =====
+const TIME=25; let G=null;
+function validNick(s){const parts=s.trim().split(/\s+/);return parts.length>=2&&parts.every(p=>/^[\p{L}][\p{L}'’.-]*$/u.test(p))&&parts[0].length>=2&&parts[parts.length-1].length>=2;}
+function doneKey(nick){return 'gdnk-done-'+todayKey()+'-'+nickKey(nick);}
+$('bL1').addEventListener('click',()=>{$('nickIn').value=ls('gdnk-nick')||'';$('nickErr').textContent='';show('nick');setTimeout(()=>{try{$('nickIn').focus();}catch(e){}},80);});
+$('nickForm').addEventListener('submit',e=>{
+  e.preventDefault(); const v=$('nickIn').value.trim().replace(/\s+/g,' ');
+  if(!validNick(v)){$('nickErr').textContent='Please type your name and surname, like "Julia Kowalska".';return;}
+  ls('gdnk-nick',v);
+  const done=ls(doneKey(v));
+  if(done&&$('nickForm').dataset.ok!==v){$('nickForm').dataset.ok=v;$('nickErr').textContent=`You already dived today (${done.emo} ${done.total} pts). Tap again for an unscored practice run.`;return;}
+  startL1(v,!done);
+});
+function pickDaily(){
+  const r=rng('gdnmun-'+todayKey());
+  const sec=P.find(p=>p.id==='sec'),mot=P.find(p=>p.id==='mot');
+  const rest=shuffle(P.filter(p=>p!==sec&&p!==mot),r).slice(0,5);
+  return shuffle([sec,mot,...rest],r);
+}
+function startL1(nick,scored){
+  G={nick,scored,prompts:pickDaily(),i:0,res:[],depth:0};
+  $('hudNick').textContent=nick+(scored?'':' · practice');
+  $('pips').innerHTML=G.prompts.map(()=>'<i></i>').join('');
+  setDepth(0); show('game'); loadPrompt();
+}
+function loadPrompt(){
+  const p=G.prompts[G.i];
+  [...$('pips').children].forEach((el,j)=>{el.className=j<G.i?'done':j===G.i?'on':'';});
+  $('tag').textContent=`${G.i+1}/7 · ${p.tag}`; $('q').textContent=p.q; $('ctx').textContent=p.ctx||'';
+  $('askBox').classList.remove('hide'); $('resBox').classList.add('hide'); $('next').classList.add('hide');
+  $('nope').textContent=''; $('inp').value=''; $('inp').disabled=false;
+  G.t0=performance.now(); G.locked=false;
+  setTimeout(()=>{try{$('inp').focus();}catch(e){}},60);
+  const step=()=>{ if(!G||G.locked)return; const left=Math.max(0,TIME-(performance.now()-G.t0)/1000);
+    $('bar').style.transform=`scaleX(${left/TIME})`; $('timer').classList.toggle('low',left<6);
+    if(left<=0){finishL1(null,true);return;} G.raf=requestAnimationFrame(step); };
+  cancelAnimationFrame(G.raf); G.raf=requestAnimationFrame(step);
+}
+$('form').addEventListener('submit',e=>{
+  e.preventDefault(); if(!G||G.locked)return;
+  const v=$('inp').value.trim(); if(!v)return;
+  const m=match(G.prompts[G.i],v);
+  if(m)finishL1(m);
+  else{$('nope').textContent=`"${v}" isn't on the list. Try another!`;const f=$('form');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');$('inp').select();}
+});
+$('giveUp').addEventListener('click',()=>{if(G&&!G.locked)finishL1(null,false);});
+function tierList(p,mine){
+  return `<div class="tierlist">`+ORDER.map(k=>{const items=p.list.filter(e=>e.tier===k);if(!items.length)return '';
+    return `<div class="t"><h4 style="color:${T[k].c}">${T[k].e} ${T[k].n} · ${T[k].pts} · ${items.length}</h4><div>${items.map(e=>`<span class="${e.name===mine?'me':''}">${esc(e.name)}</span>`).join(' · ')}</div></div>`;}).join('')+`</div>`;
+}
+function finishL1(hit,timeout){
+  G.locked=true; cancelAnimationFrame(G.raf);
+  const p=G.prompts[G.i]; $('inp').disabled=true; try{$('inp').blur();}catch(e){}
+  let pts=0,html='';
+  if(hit){const t=T[hit.tier];pts=t.pts;G.depth+=pts*10;
+    html=`<div class="result" style="border-color:${t.c}55"><div class="emo">${t.e}</div><div class="tier" style="color:${t.c}">${t.n}</div><div class="pts">+${pts} pts · +${pts*10} m</div><div class="your">${esc(hit.name)}</div>${hit.note?`<div class="note">${esc(hit.note)}</div>`:''}</div>`;}
+  else html=`<div class="result"><div class="emo">🌊</div><div class="tier" style="color:var(--bad)">${timeout?'Out of air':'Surfaced'}</div><div class="pts">+0 pts</div></div>`;
+  const kr=p.list.filter(e=>e.tier==='k').slice(0,6);
+  if(kr.length)html+=`<div class="rares"><b>${T.k.e} One in a Krillion:</b> ${kr.map(e=>esc(e.name)).join(', ')}${p.list.filter(e=>e.tier==='k').length>6?'…':''}</div>`;
+  html+=`<details><summary>See all ${p.list.length} accepted answers</summary>${tierList(p,hit&&hit.name)}</details>`;
+  if(p.foot)html+=`<p class="muted" style="font-size:13px;margin-top:12px">${esc(p.foot)}</p>`;
+  $('resBox').innerHTML=html; $('resBox').classList.remove('hide'); $('askBox').classList.add('hide');
+  G.res.push({p,hit,pts});
+  $('depthNum').textContent=G.depth.toLocaleString('en-US'); setDepth(G.depth);
+  $('nextLbl').textContent=G.i===6?'See your dive':'Next prompt'; $('next').classList.remove('hide');
+}
+$('next').addEventListener('click',()=>{if(G.i<6){G.i++;loadPrompt();}else endL1();});
+function rankFor(d){if(d>=6000)return 'Secretary-General of the Deep 🦐';if(d>=4500)return 'Head of Supplies energy: you know where everything is.';if(d>=3000)return 'Seasoned delegate. You read the study guides.';if(d>=1500)return 'Respectable first-timer. Motion for more practice?';return 'Plankton tier. Motion to try again?';}
+function endL1(){
+  const total=G.res.reduce((s,r)=>s+r.pts,0), emo=G.res.map(r=>r.hit?T[r.hit.tier].e:'❌').join('');
+  $('endWho').textContent=G.nick+' reached'; $('endDepth').textContent=(total*10).toLocaleString('en-US');
+  $('endPts').textContent=`${total} / 700 points`; $('endEmo').textContent=emo; $('endRank').textContent=rankFor(total*10);
+  $('endKicker').textContent=(G.scored?'Daily Dive · ':'Practice run · ')+todayKey();
+  $('recap').innerHTML=G.res.map(r=>{const best=r.p.list.find(e=>e.tier==='k')||r.p.list.find(e=>e.tier==='d');
+    return `<tr><td><div style="color:var(--dim);font-size:12px">${esc(r.p.tag)}</div>${r.hit?esc(r.hit.name):'<span style="color:var(--bad)">—</span>'}<div style="color:var(--dim);font-size:12px">Deepest: ${esc(best?best.name:'')}</div></td><td class="r">${r.hit?T[r.hit.tier].e+' '+r.pts:'0'}</td></tr>`;}).join('');
+  G.share=`GDNKrillion 🌊 ${todayKey()}\n${emo}\n${total} pts · ${(total*10).toLocaleString('en-US')} m\nGDNMUN 2026 · Gdańsk`;
+  if(G.scored){const run={nick:G.nick,total,emo,date:todayKey(),src:'device'};ls(doneKey(G.nick),{total,emo});saveLocalRun(run);pushShared(run);pushRemote(run);}
+  show('end');
+}
+$('share').addEventListener('click',()=>copy(G.share));
+
+// ===== LEVEL 2 =====
+const SEATS=['UNSC','DISEC','ECOSOC','HRC','WHO','UNODC','UN Women','ICC','AHC','GDNMUN TV'];
+const PTIME=15; let PG=null;
+$('bL2').addEventListener('click',()=>{ if(ss('gdnk-l2')==='1'){openSetup();return;} $('lockIn').value='';$('lockErr').textContent='';show('lock');setTimeout(()=>{try{$('lockIn').focus();}catch(e){}},80);});
+$('lockForm').addEventListener('submit',e=>{e.preventDefault();
+  if(cyrb(codeNorm($('lockIn').value))===L2_HASH){ss('gdnk-l2','1');openSetup();}
+  else{$('lockErr').textContent='Wrong code. The Sec has it.';const f=$('lockForm');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');}
+});
+function openSetup(){
+  const saved=ls('gdnk-seats')||[];
+  $('seats').innerHTML=SEATS.map((s,i)=>`<label class="seat"><span class="com">${esc(s)}</span><input type="text" maxlength="20" placeholder="Player name" data-seat="${i}" value="${esc(saved[i]||'')}"></label>`).join('');
+  $('seats').querySelectorAll('input').forEach(i=>i.addEventListener('input',countSeats));
+  countSeats(); $('setupErr').textContent=''; show('setup');
+}
+function seatNames(){return [...$('seats').querySelectorAll('input')].map(i=>i.value.trim());}
+function countSeats(){const n=seatNames().filter(Boolean).length;$('seatCount').textContent=`${n} / 10 seats filled`;$('startParty').disabled=n<2;}
+$('startParty').addEventListener('click',()=>{
+  const names=seatNames(); if(names.filter(Boolean).length<2){$('setupErr').textContent='You need at least 2 players.';return;}
+  ls('gdnk-seats',names); startParty(names);
+});
+function startParty(names){
+  const players=names.map((n,i)=>n?{name:n,seat:SEATS[i],hearts:2,pts:0,answers:0,outAt:null}:null).filter(Boolean);
+  const deckSrc=P.filter(p=>p.l2);
+  PG={players,deck:shuffle(deckSrc,Math.random),di:0,cur:0,round:0,outOrder:[],locked:true};
+  show('party'); newPrompt(0);
+}
+function alive(){return PG.players.filter(p=>p.hearts>0);}
+function nextAliveFrom(i){const n=PG.players.length;for(let k=1;k<=n;k++){const j=(i+k)%n;if(PG.players[j].hearts>0)return j;}return i;}
+function newPrompt(starter){
+  if(PG.di>=PG.deck.length){PG.deck=shuffle(P.filter(p=>p.l2),Math.random);PG.di=0;} // safety net, never needed with 2 hearts x 10 seats
+  PG.p=PG.deck[PG.di++]; PG.round++; PG.used=new Set(); PG.usedList=[];
+  PG.cur=PG.players[starter].hearts>0?starter:nextAliveFrom(starter);
+  $('pTag').textContent=`Prompt ${PG.round} · ${PG.p.tag}`; $('pQ').textContent=PG.p.q; $('pCtx').textContent=PG.p.ctx||'';
+  $('pRes').classList.add('hide'); $('pNext').classList.add('hide'); $('pAsk').classList.remove('hide'); renderUsed();
+  startTurn(true);
+}
+function renderPlayers(){
+  $('players').innerHTML=PG.players.map((p,i)=>`<div class="pl ${p.hearts<=0?'out':''} ${i===PG.cur&&p.hearts>0?'cur':''}"><small>${esc(p.seat)}</small>${esc(p.name)} ${'❤️'.repeat(Math.max(0,p.hearts))}${'🖤'.repeat(2-Math.max(0,p.hearts))}</div>`).join('');
+}
+function renderUsed(){$('pUsed').innerHTML=PG.usedList.slice().reverse().map(u=>`<span>${T[u.tier].e} ${esc(u.name)}</span>`).join('');}
+function startTurn(first){
+  renderPlayers(); const pl=PG.players[PG.cur];
+  $('pTurn').innerHTML=`${first?'':'Pass to '}<span>${esc(pl.name)}</span> · ${esc(pl.seat)}`;
+  $('pNope').textContent=''; $('pInp').value=''; $('pInp').disabled=true; PG.locked=true;
+  $('pBar').style.transform='scaleX(1)'; $('pTimer').classList.remove('low');
+  clearTimeout(PG.hand);
+  PG.hand=setTimeout(()=>{
+    $('pTurn').innerHTML=`<span>${esc(pl.name)}</span>, your turn · ${esc(pl.seat)}`;
+    $('pInp').disabled=false; PG.locked=false; PG.t0=performance.now();
+    try{$('pInp').focus();}catch(e){}
+    const step=()=>{ if(PG.locked)return; const left=Math.max(0,PTIME-(performance.now()-PG.t0)/1000);
+      $('pBar').style.transform=`scaleX(${left/PTIME})`; $('pTimer').classList.toggle('low',left<4);
+      if(left<=0){failTurn(true);return;} PG.raf=requestAnimationFrame(step); };
+    cancelAnimationFrame(PG.raf); PG.raf=requestAnimationFrame(step);
+  },first?700:1100);
+}
+$('pForm').addEventListener('submit',e=>{
+  e.preventDefault(); if(!PG||PG.locked)return;
+  const v=$('pInp').value.trim(); if(!v)return;
+  const m=match(PG.p,v);
+  const bad=msg=>{$('pNope').textContent=msg;const f=$('pForm');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');$('pInp').select();};
+  if(!m)return bad(`"${v}" isn't on the list. Quick, another!`);
+  if(PG.used.has(m.name))return bad(`${m.name} was already said!`);
+  PG.locked=true; cancelAnimationFrame(PG.raf);
+  PG.used.add(m.name); PG.usedList.push(m);
+  const pl=PG.players[PG.cur]; pl.pts+=T[m.tier].pts; pl.answers++;
+  $('pFlash').innerHTML=`<span style="color:${T[m.tier].c}">${T[m.tier].e} ${T[m.tier].n}</span> · ${esc(pl.name)}: ${esc(m.name)} <span class="muted">+${T[m.tier].pts}</span>`;
+  renderUsed();
+  PG.cur=nextAliveFrom(PG.cur); startTurn(false);
+});
+$('pPass').addEventListener('click',()=>{if(PG&&!PG.locked)failTurn(false);});
+function failTurn(timeout){
+  PG.locked=true; cancelAnimationFrame(PG.raf); clearTimeout(PG.hand);
+  const pl=PG.players[PG.cur]; pl.hearts--;
+  let msg=`💔 <b>${esc(pl.name)}</b> ${timeout?'ran out of time':'passed'} and loses a heart.`;
+  if(pl.hearts<=0){pl.outAt=PG.round;PG.outOrder.push(pl);msg+=` <b style="color:var(--bad)">Out of air!</b>`;}
+  const left=PG.p.list.filter(e=>!PG.used.has(e.name));
+  const ideas=shuffle(left.filter(e=>e.tier==='k'||e.tier==='d'),Math.random).slice(0,4);
+  const exhausted=!left.length;
+  $('pRes').innerHTML=`<div class="result"><div style="font-size:15px">${msg}</div>${exhausted?'<div class="note">Every answer on the list was used. Brutal.</div>':ideas.length?`<div class="note">Still on the table: ${ideas.map(e=>esc(e.name)).join(', ')}</div>`:''}<div class="note">${PG.used.size} answers this round · ${left.length} left unsaid</div></div>`;
+  $('pRes').classList.remove('hide'); $('pAsk').classList.add('hide'); $('pFlash').textContent='';
+  renderPlayers();
+  const failIdx=PG.cur;
+  if(alive().length<=1){ $('pNext').querySelector('span').textContent='See the results'; $('pNext').onclick=endParty; }
+  else { $('pNext').querySelector('span').textContent='Next prompt'; $('pNext').onclick=()=>newPrompt(nextAliveFrom(failIdx)); }
+  $('pNext').classList.remove('hide');
+}
+function endParty(){
+  const al=alive(); const winner=al[0]||PG.outOrder[PG.outOrder.length-1];
+  $('winName').textContent=winner.name; $('winSeat').textContent=`${winner.seat} · ${winner.pts} pts · ${winner.answers} answers`;
+  const order=[...al,...PG.outOrder.slice().reverse()];
+  $('standings').innerHTML=`<tr><th>#</th><th>Delegate</th><th class="r">Answers</th><th class="r">Pts</th></tr>`+order.map((p,i)=>`<tr><td>${i===0?'🏆':i+1}</td><td>${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.seat)}${p.outAt?' · out on prompt '+p.outAt:''}</div></td><td class="r">${p.answers}</td><td class="r">${p.pts}</td></tr>`).join('');
+  show('pend');
+}
+$('rematch').addEventListener('click',()=>startParty(ls('gdnk-seats')||[]));
+$('reseat').addEventListener('click',openSetup);
+
+// ===== DEVELOPER =====
+let DEVKEY=null;
+$('bDev').addEventListener('click',()=>{ if(DEVKEY){openDev();return;} $('devIn').value='';$('devErr').textContent='';$('devModal').classList.remove('hide');setTimeout(()=>{try{$('devIn').focus();}catch(e){}},80);});
+$('devCancel').addEventListener('click',()=>$('devModal').classList.add('hide'));
+$('devForm').addEventListener('submit',e=>{e.preventDefault();const c=codeNorm($('devIn').value);
+  if(cyrb(c)===DEV_HASH){DEVKEY=c;$('devModal').classList.add('hide');openDev();}
+  else{$('devErr').textContent='Wrong developer code.';}
+});
+function openDev(){ $('devCode').textContent=decodeL2(DEVKEY); show('dev'); loadLb(); }
+$('copyCode').addEventListener('click',()=>copy($('devCode').textContent));
+$('refreshLb').addEventListener('click',loadLb);
+$('devOut').addEventListener('click',()=>{DEVKEY=null;show('home');});
+async function loadLb(){
+  $('lb').innerHTML='<tr><td class="muted">Loading…</td></tr>';
+  const local=(ls('gdnk-runs')||[]).map(r=>({...r,src:'device'}));
+  const [remote,shared]=await Promise.all([readRemote(),readShared()]);
+  const all=[...(remote?remote.scores:[]),...(shared||[]),...local]; const best={};
+  const rank={online:3,shared:2,device:1};
+  all.forEach(r=>{const k=nickKey(r.nick);if(!best[k]||r.total>best[k].total||(r.total===best[k].total&&rank[r.src]>rank[best[k].src]))best[k]=r;});
+  const rows=Object.values(best).sort((a,b)=>b.total-a.total).slice(0,200);
+  let note;
+  if(remote) note=`🟢 Live scoreboard connected · ${remote.dives} dives saved · ${rows.length} players`;
+  else if(HAS_REMOTE) note=`🟠 Couldn't reach the scoreboard right now. Showing scores from this device. Tap Refresh to try again.`;
+  else note=`⚪ No scoreboard link set up yet, so this only shows scores played on this device (${rows.length} players).`;
+  $('lbNote').textContent=note;
+  if(remote&&remote.sheet){const a=document.createElement('a');a.href=remote.sheet;a.target='_blank';a.rel='noopener';a.textContent=' Open the Google Sheet ↗';a.style.color='var(--accent)';$('lbNote').appendChild(a);}
+  const icon={online:'🌍',shared:'☁️',device:'📱'};
+  $('lb').innerHTML=rows.length?`<tr><th>#</th><th>Nickname</th><th class="r">Best</th><th class="r">Depth</th></tr>`+rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.nick)}<div class="muted" style="font-size:12px">${icon[r.src]||''} ${esc(r.date)} ${esc(r.emo)}</div></td><td class="r">${r.total}</td><td class="r">${(r.total*10).toLocaleString('en-US')} m</td></tr>`).join(''):'<tr><td class="muted">No dives yet.</td></tr>';
+}
+$('openGuide').addEventListener('click',()=>{
+  const total=P.reduce((s,p)=>s+p.list.length,0);
+  $('guideCount').textContent=`${P.length} prompts · ${total.toLocaleString('en-US')} accepted answers. Prompts marked L2 are in the GDNMUN Final deck.`;
+  $('guideBody').innerHTML=P.map(p=>`<div class="guideq"><span class="chip">${esc(p.tag)}${p.l2?' · L1 + L2':' · L1'}</span><h3>${esc(p.q)}</h3><details><summary>${p.list.length} answers</summary>${tierList(p,null)}</details></div>`).join('');
+  show('guide');
+});
+$('guideBack').addEventListener('click',()=>show('dev'));
+
+show('home');
+</script>
+</body>
+</html>
